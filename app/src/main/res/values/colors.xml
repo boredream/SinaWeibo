@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="bg_gray_bar">#f9f9f9</color>
+    <color name="bg_gray_dark">#e8e8e8</color>
+    <color name="bg_gray_light">#fcfcfc</color>
+    <color name="bg_agray">#49dddddd</color>
+
+    <color name="orange">#ff8200</color>
+    <color name="orange_alpha">#66ff8200</color>
+    <color name="orange_dark">#d46303</color>
+
+    <color name="alpha_white">#49ffffff</color>
+    <color name="alpha_black">#49000000</color>
+
+</resources>

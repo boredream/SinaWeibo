@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="BoreAppTheme">
+
+    </style>
+
+    <style name="RadioButtonEmotionDashboard">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">@dimen/txtsize_body</item>
+        <item name="android:textColor">@drawable/txtcolor_white2black_sel</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/bg_dgray2white_sel</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="RadioButtonStatusDetailTab">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:textSize">@dimen/txtsize_subhead</item>
+        <item name="android:textColor">@color/txt_black</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:background">@drawable/layerlist_tab_indicator_sel</item>
+        <item name="android:button">@null</item>
+        <item name="android:gravity">center</item>
+    </style>
+
+    <style name="RadioButtonUserInfoTab" parent="RadioButtonStatusDetailTab">
+        <item name="android:background">@color/white</item>
+    </style>
+
+</resources>

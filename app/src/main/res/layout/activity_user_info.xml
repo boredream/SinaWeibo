@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg_gray" >
+
+    <ImageView
+        android:id="@+id/iv_user_info_head"
+        android:layout_width="match_parent"
+        android:layout_height="244dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/visitor_me_cover" />
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refresh"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <com.boredream.boreweibo.widget.Pull2RefreshListView
+            android:id="@+id/lv_user_info"
+            style="@style/AbsListViewCommon" >
+        </com.boredream.boreweibo.widget.Pull2RefreshListView>
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <include
+            layout="@layout/include_titlebar"
+            android:background="@color/transparent" />
+
+        <include
+            android:id="@+id/user_info_tab"
+            layout="@layout/user_info_tab"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</RelativeLayout>
