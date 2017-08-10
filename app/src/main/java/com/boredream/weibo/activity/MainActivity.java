@@ -10,6 +10,10 @@ import android.widget.RadioGroup;
 import com.boredream.bdcodehelper.fragment.FragmentController;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
+import com.boredream.weibo.fragment.HomeFragment;
+import com.boredream.weibo.fragment.MessageFragment;
+import com.boredream.weibo.fragment.SearchFragment;
+import com.boredream.weibo.fragment.UserFragment;
 
 import java.util.ArrayList;
 
@@ -34,6 +38,10 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 		iv_add.setOnClickListener(this);
 
 		ArrayList<Fragment> fragments = new ArrayList<>();
+		fragments.add(new HomeFragment());
+		fragments.add(new MessageFragment());
+		fragments.add(new SearchFragment());
+		fragments.add(new UserFragment());
 		controller = new FragmentController(this, R.id.fl_content, fragments);
 		controller.showFragment(0);
 		controller.setRadioGroup(rg_tab);

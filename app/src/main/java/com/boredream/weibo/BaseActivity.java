@@ -4,7 +4,7 @@ import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import com.boredream.bdcodehelper.base.BoreBaseActivity;
-import com.boredream.weibo.constants.AccessTokenKeeper;
+import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 public abstract class BaseActivity extends BoreBaseActivity {

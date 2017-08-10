@@ -33,5 +33,4 @@ public class MessageFragment extends BaseFragment {
 		
 		return view;
 	}
-
 }

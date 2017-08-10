@@ -76,12 +76,12 @@
                 android:layout_height="1px"
                 android:background="@color/divider_gray" />
 
-            <com.boredream.boreweibo.widget.WrapHeightListView
+            <com.boredream.bdcodehelper.view.WrapHeightListView
                 android:id="@+id/lv_user_items"
                 style="@style/AbsListViewCommon"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp" >
-            </com.boredream.boreweibo.widget.WrapHeightListView>
+            </com.boredream.bdcodehelper.view.WrapHeightListView>
         </LinearLayout>
     </ScrollView>
 

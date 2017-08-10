@@ -8,15 +8,19 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.boredream.bdcodehelper.net.DefaultDisposableObserver;
-import com.boredream.bdcodehelper.net.HttpRequest;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.api.WeiboApi;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.response.CommentListResponse;
+import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
+import com.sina.weibo.sdk.net.WeiboParameters;
+import com.sina.weibo.sdk.utils.Utility;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -88,16 +92,20 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 		Map<String, String> request = new HashMap<>();
 		request.put("access_token", accessToken.getToken());
 		request.put("id", String.valueOf(status.getId()));
+		try {
+			comment = URLEncoder.encode(comment, "utf-8");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 		request.put("comment", comment);
 
 		HttpRequest.getSingleton()
-				.getApiService(WeiboApi.class)
+				.getApiService()
 				.commentsCreate(request)
-				.subscribe(new DefaultDisposableObserver<CommentListResponse>(this) {
+				.compose(RxComposer.<CommentListResponse>common(this))
+				.subscribe(new SimpleDisObserver<CommentListResponse>() {
 					@Override
 					public void onNext(CommentListResponse commentListResponse) {
-						super.onNext(commentListResponse);
-
 						showTip("微博发送成功");
 
 						// 微博发送成功后,设置Result结果数据,然后关闭本页面

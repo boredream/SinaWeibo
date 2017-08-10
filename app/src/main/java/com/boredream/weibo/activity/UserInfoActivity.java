@@ -15,16 +15,16 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.DefaultDisposableObserver;
-import com.boredream.bdcodehelper.net.HttpRequest;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.BaseApplication;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusAdapter;
-import com.boredream.weibo.api.WeiboApi;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.response.StatusListResponse;
+import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.boredream.weibo.widget.UnderlineIndicatorView;
 import com.bumptech.glide.Glide;
@@ -265,13 +265,12 @@ public class UserInfoActivity extends BaseActivity implements
 	
 	private void loadUserInfo() {
 		HttpRequest.getSingleton()
-				.getApiService(WeiboApi.class)
-				.usersShow(accessToken.getToken(), accessToken.getUid())
-				.subscribe(new DefaultDisposableObserver<User>(this) {
+				.getApiService()
+				.usersShow(accessToken.getUid())
+				.compose(RxComposer.<User>common(this))
+				.subscribe(new SimpleDisObserver<User>() {
 					@Override
 					public void onNext(User user) {
-						super.onNext(user);
-
 						setUserInfo();
 					}
 				});
@@ -289,13 +288,12 @@ public class UserInfoActivity extends BaseActivity implements
 			uname = userName;
 		}
 		HttpRequest.getSingleton()
-				.getApiService(WeiboApi.class)
-				.statusesUser_timeline(accessToken.getToken(), uid, uname, page)
-				.subscribe(new DefaultDisposableObserver<StatusListResponse>(this) {
+				.getApiService()
+				.statusesUser_timeline(uid, uname, page)
+				.compose(RxComposer.<StatusListResponse>common(this))
+				.subscribe(new SimpleDisObserver<StatusListResponse>() {
 					@Override
 					public void onNext(StatusListResponse response) {
-						super.onNext(response);
-
 						showLog("status comments = " + response);
 
 						if(page == 1) {
@@ -307,8 +305,6 @@ public class UserInfoActivity extends BaseActivity implements
 
 					@Override
 					public void onError(Throwable e) {
-						super.onError(e);
-
 						// TODO: 2017/8/8
 //						lv_home.onRefreshComplete();
 					}

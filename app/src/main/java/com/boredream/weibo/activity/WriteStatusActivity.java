@@ -19,22 +19,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.DefaultDisposableObserver;
-import com.boredream.bdcodehelper.net.HttpRequest;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.EmotionGvAdapter;
 import com.boredream.weibo.adapter.EmotionPagerAdapter;
 import com.boredream.weibo.adapter.WriteStatusGridImgsAdapter;
-import com.boredream.weibo.api.WeiboApi;
 import com.boredream.weibo.entity.Status;
+import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.EmotionUtils;
 import com.boredream.weibo.utils.ImageUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.boredream.weibo.utils.TitleBuilder;
-import com.boredream.weibo.widget.WrapHeightGridView;
 import com.bumptech.glide.Glide;
+import com.sina.weibo.sdk.web.WeiboPageUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +46,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	// 输入框
 	private EditText et_write_status;
 	// 添加的九宫格图片
-	private WrapHeightGridView gv_write_status;
+	private GridView gv_write_status;
 	// 转发微博内容
 	private View include_retweeted_status_card;
 	private ImageView iv_rstatus_img;;
@@ -94,7 +94,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		// 输入框
 		et_write_status = (EditText) findViewById(R.id.et_write_status);
 		// 添加的九宫格图片
-		gv_write_status = (WrapHeightGridView) findViewById(R.id.gv_write_status);
+		gv_write_status = (GridView) findViewById(R.id.gv_write_status);
 		// 转发微博内容
 		include_retweeted_status_card = findViewById(R.id.include_retweeted_status_card);
 		iv_rstatus_img = (ImageView) findViewById(R.id.iv_rstatus_img);
@@ -151,13 +151,12 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		request.put("pic", imgFilePath);
 		request.put("id", String.valueOf(retweetedStatusId));
 		HttpRequest.getSingleton()
-				.getApiService(WeiboApi.class)
+				.getApiService()
 				.statusesRepost(request)
-				.subscribe(new DefaultDisposableObserver<Status>(this) {
+				.compose(RxComposer.<Status>common(this))
+				.subscribe(new SimpleDisObserver<Status>() {
 					@Override
 					public void onNext(Status status) {
-						super.onNext(status);
-
 						showTip("微博发送成功");
 						finish();
 					}

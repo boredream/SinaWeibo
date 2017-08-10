@@ -22,22 +22,21 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.DefaultDisposableObserver;
-import com.boredream.bdcodehelper.net.HttpRequest;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusCommentAdapter;
 import com.boredream.weibo.adapter.StatusGridImgsAdapter;
-import com.boredream.weibo.api.WeiboApi;
 import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.PicUrls;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.response.CommentListResponse;
+import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.DateUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.boredream.weibo.utils.TitleBuilder;
-import com.boredream.weibo.widget.WrapHeightGridView;
 import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -59,7 +58,7 @@ public class StatusDetailActivity extends BaseActivity implements
 	private TextView tv_subhead;
 	private TextView tv_caption;
 	private FrameLayout include_status_image;
-	private WrapHeightGridView gv_images;
+	private GridView gv_images;
 	private ImageView iv_image;
 	private TextView tv_content;
 	private View include_retweeted_status;
@@ -152,7 +151,7 @@ public class StatusDetailActivity extends BaseActivity implements
 		tv_subhead = (TextView) status_detail_info.findViewById(R.id.tv_subhead);
 		tv_caption = (TextView) status_detail_info.findViewById(R.id.tv_caption);
 		include_status_image = (FrameLayout) status_detail_info.findViewById(R.id.include_status_image);
-		gv_images = (WrapHeightGridView) status_detail_info.findViewById(R.id.gv_images);
+		gv_images = (GridView) status_detail_info.findViewById(R.id.gv_images);
 		iv_image = (ImageView) status_detail_info.findViewById(R.id.iv_image);
 		tv_content = (TextView) status_detail_info.findViewById(R.id.tv_content);
 		include_retweeted_status = status_detail_info.findViewById(R.id.include_retweeted_status);
@@ -349,26 +348,25 @@ public class StatusDetailActivity extends BaseActivity implements
 	 */
 	private void loadComments(final int page) {
 		HttpRequest.getSingleton()
-				.getApiService(WeiboApi.class)
-				.commentsShow(accessToken.getToken(), status.getId(), page)
-				.subscribe(new DefaultDisposableObserver<CommentListResponse>(this) {
+				.getApiService()
+				.commentsShow(status.getId(), page)
+				.compose(RxComposer.<CommentListResponse>common(this))
+				.subscribe(new SimpleDisObserver<CommentListResponse>() {
 					@Override
-					public void onNext(CommentListResponse commentListResponse) {
-						super.onNext(commentListResponse);
-
+					public void onNext(CommentListResponse response) {
 						// 如果是加载第一页(第一次进入,下拉刷新)时,先清空已有数据
 						if (page == 1) {
 							comments.clear();
 						}
 
 						// 更新评论数信息
-						tv_comment_bottom.setText(commentListResponse.getTotal_number() == 0 ?
-								"评论" : commentListResponse.getTotal_number() + "");
-						shadow_rb_comments.setText("评论 " + commentListResponse.getTotal_number());
-						rb_comments.setText("评论 " + commentListResponse.getTotal_number());
+						tv_comment_bottom.setText(response.getTotal_number() == 0 ?
+								"评论" : response.getTotal_number() + "");
+						shadow_rb_comments.setText("评论 " + response.getTotal_number());
+						rb_comments.setText("评论 " + response.getTotal_number());
 
 						// 将获取的评论信息添加到列表上
-						addData(commentListResponse);
+						addData(response);
 
 						// 判断是否需要滚动至评论部分
 						if(scroll2Comment) {
@@ -379,8 +377,6 @@ public class StatusDetailActivity extends BaseActivity implements
 
 					@Override
 					public void onError(Throwable e) {
-						super.onError(e);
-
 						// 通知下拉刷新控件完成刷新
 						// TODO: 2017/8/8
 //						refresh.onRefreshComplete();

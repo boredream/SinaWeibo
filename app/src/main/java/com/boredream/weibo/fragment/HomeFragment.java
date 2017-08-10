@@ -6,22 +6,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.boredream.bdcodehelper.net.DefaultDisposableObserver;
-import com.boredream.bdcodehelper.net.HttpRequest;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseFragment;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusAdapter;
-import com.boredream.weibo.api.WeiboApi;
+import com.boredream.weibo.constants.WeiboConstants;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.response.StatusListResponse;
+import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.sina.weibo.sdk.auth.AuthInfo;
+import com.sina.weibo.sdk.web.WeiboPageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import io.reactivex.annotations.NonNull;
 
 public class HomeFragment extends BaseFragment {
 
@@ -69,14 +74,27 @@ public class HomeFragment extends BaseFragment {
 	}
 
 	public void loadData(final int page) {
-		HttpRequest.getSingleton()
-				.getApiService(WeiboApi.class)
-				.statusesHome_timeline(accessToken.getToken(), page)
-				.subscribe(new DefaultDisposableObserver<StatusListResponse>(activity) {
-					@Override
-					public void onNext(StatusListResponse response) {
-						super.onNext(response);
+		AuthInfo authInfo = new AuthInfo(activity,
+				WeiboConstants.APP_KEY,
+				WeiboConstants.REDIRECT_URL,
+				WeiboConstants.SCOPE);
 
+		WeiboPageUtils.getInstance(activity, authInfo)
+				.commentWeibo("111");
+
+
+		if (1==1) {
+			return;
+		}
+
+		HttpRequest.getSingleton()
+				.getApiService()
+				.statusesHome_timeline(page)
+				.compose(RxComposer.<StatusListResponse>common(activity))
+				.subscribe(new SimpleDisObserver<StatusListResponse>() {
+
+					@Override
+					public void onNext(@NonNull StatusListResponse response) {
 						if(page == 1) {
 							statuses.clear();
 						}
@@ -86,12 +104,11 @@ public class HomeFragment extends BaseFragment {
 					}
 
 					@Override
-					public void onError(Throwable e) {
-						super.onError(e);
-
-						// TODO: 2017/8/8  
-//						lv_home.onRefreshComplete();
+					public void onError(@NonNull Throwable e) {
+						// TODO: 2017/8/8
+						// lv_home.onRefreshComplete();
 					}
+
 				});
 	}
 	

@@ -29,7 +29,7 @@
                 android:hint="写评论..."
                 android:textColorHint="@color/txt_gray" />
 
-            <com.boredream.boreweibo.widget.WrapHeightGridView
+            <com.boredream.bdcodehelper.view.WrapHeightGridView
                 android:id="@+id/gv_write_status"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,7 +39,7 @@
                 android:numColumns="3"
                 android:scrollbars="none"
                 android:verticalSpacing="8dp" >
-            </com.boredream.boreweibo.widget.WrapHeightGridView>
+            </com.boredream.bdcodehelper.view.WrapHeightGridView>
             
             <include
                 android:id="@+id/include_retweeted_status_card"

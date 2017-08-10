@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.boredream.weibo.activity.MainActivity;
-import com.boredream.weibo.constants.AccessTokenKeeper;
+import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 
 public class BaseFragment extends Fragment {
@@ -19,4 +19,5 @@ public class BaseFragment extends Fragment {
 		activity = (MainActivity) getActivity();
 		accessToken = AccessTokenKeeper.readAccessToken(activity);
 	}
+
 }

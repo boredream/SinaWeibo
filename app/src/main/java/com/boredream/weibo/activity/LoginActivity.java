@@ -8,9 +8,9 @@ import android.view.View.OnClickListener;
 
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.constants.AccessTokenKeeper;
 import com.boredream.weibo.constants.WeiboConstants;
 import com.sina.weibo.sdk.WbSdk;
+import com.sina.weibo.sdk.auth.AccessTokenKeeper;
 import com.sina.weibo.sdk.auth.AuthInfo;
 import com.sina.weibo.sdk.auth.Oauth2AccessToken;
 import com.sina.weibo.sdk.auth.WbAuthListener;
@@ -19,24 +19,26 @@ import com.sina.weibo.sdk.auth.sso.SsoHandler;
 
 public class LoginActivity extends BaseActivity {
 
-    /** 封装了 "access_token"，"expires_in"，"refresh_token"，并提供了他们的管理功能  */
     private Oauth2AccessToken mAccessToken;
-    private AuthInfo mAuthInfo;
     private SsoHandler mSsoHandler;
 
     @Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
-        
-        mAuthInfo = new AuthInfo(this, WeiboConstants.APP_KEY, WeiboConstants.REDIRECT_URL, WeiboConstants.SCOPE);
-        WbSdk.install(this,mAuthInfo);
+
+        AuthInfo mAuthInfo = new AuthInfo(this,
+                WeiboConstants.APP_KEY,
+                WeiboConstants.REDIRECT_URL,
+                WeiboConstants.SCOPE);
+        WbSdk.install(this, mAuthInfo);
 
         mSsoHandler = new SsoHandler(this);
 		findViewById(R.id.btn_login).setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View arg0) {
-				mSsoHandler.authorize(new SelfWbAuthListener());
+                mSsoHandler.authorizeClientSso(new SelfWbAuthListener());
+//				mSsoHandler.authorize(new SelfWbAuthListener());
 			}
 		});
 	}

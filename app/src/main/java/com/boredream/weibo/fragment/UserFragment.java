@@ -8,20 +8,20 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.DefaultDisposableObserver;
-import com.boredream.bdcodehelper.net.HttpRequest;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseApplication;
 import com.boredream.weibo.BaseFragment;
 import com.boredream.weibo.R;
 import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.adapter.UserItemAdapter;
-import com.boredream.weibo.api.WeiboApi;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.UserItem;
+import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
-import com.boredream.weibo.widget.WrapHeightListView;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -39,7 +39,7 @@ public class UserFragment extends BaseFragment {
 	private TextView tv_follow_count;
 	private TextView tv_fans_count;
 	
-	private WrapHeightListView lv_user_items;
+	private ListView lv_user_items;
 
 	private User currentUser;
 	private View view;
@@ -76,13 +76,12 @@ public class UserFragment extends BaseFragment {
 
 	private void loadUserInfo() {
 		HttpRequest.getSingleton()
-                .getApiService(WeiboApi.class)
-                .usersShow(accessToken.getToken(), accessToken.getUid())
-                .subscribe(new DefaultDisposableObserver<User>(activity) {
+				.getApiService()
+                .usersShow(accessToken.getUid())
+				.compose(RxComposer.<User>common(activity))
+                .subscribe(new SimpleDisObserver<User>() {
                     @Override
                     public void onNext(User user) {
-                        super.onNext(user);
-
                         BaseApplication.currentUser = currentUser = user;
                         setUserInfo();
                     }
@@ -111,8 +110,8 @@ public class UserFragment extends BaseFragment {
 		tv_follow_count = (TextView) view.findViewById(R.id.tv_follow_count);
 		tv_fans_count = (TextView) view.findViewById(R.id.tv_fans_count);
 		// 设置栏列表
-		lv_user_items = (WrapHeightListView) view.findViewById(R.id.lv_user_items);
-		userItems = new ArrayList<UserItem>();
+		lv_user_items = (ListView) view.findViewById(R.id.lv_user_items);
+		userItems = new ArrayList<>();
 		adapter = new UserItemAdapter(activity, userItems);
 		lv_user_items.setAdapter(adapter);
 	}
