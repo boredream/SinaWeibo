@@ -15,16 +15,13 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.BaseApplication;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusAdapter;
-import com.boredream.weibo.entity.Status;
+import com.boredream.weibo.constants.UserInfoKeeper;
+import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
-import com.boredream.weibo.entity.response.StatusListResponse;
-import com.boredream.weibo.net.WeiboHttpRequest;
-import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.boredream.weibo.widget.UnderlineIndicatorView;
 import com.bumptech.glide.Glide;
@@ -61,13 +58,12 @@ public class UserInfoActivity extends BaseActivity implements
 	private ImageView iv_user_info_head;
 	private SmartRefreshLayout refresh;
 	private ListView lv_user_info;
-	private View footView;
 	// 用户相关信息
 	private boolean isCurrentUser;
 	private User user;
 	private String userName;
 	// 个人微博列表
-	private List<Status> statuses = new ArrayList<Status>();
+	private List<Goods> statuses = new ArrayList<>();
 	private StatusAdapter statusAdapter;
 	private int curPage = 1;
 	// 背景图片最小高度
@@ -86,7 +82,7 @@ public class UserInfoActivity extends BaseActivity implements
 		userName = getIntent().getStringExtra("userName");
 		if(TextUtils.isEmpty(userName)) {
 			isCurrentUser = true;
-			user = BaseApplication.currentUser;
+			user = UserInfoKeeper.getInstance().getCurrentUser();
 		}
 
 		initView();
@@ -145,7 +141,6 @@ public class UserInfoActivity extends BaseActivity implements
 		refresh = (SmartRefreshLayout) findViewById(R.id.refresh);
 		lv_user_info = (ListView) findViewById(R.id.lv_user_info);
 		initLoadingLayout();
-		footView = View.inflate(this, R.layout.footview_loading, null);
 		statusAdapter = new StatusAdapter(this, statuses);
 		lv_user_info.setAdapter(statusAdapter);
 		lv_user_info.addHeaderView(user_info_head);
@@ -254,77 +249,78 @@ public class UserInfoActivity extends BaseActivity implements
 		if(user == null) {
 			return;
 		}
-		tv_name.setText(user.getName());
-		titlebar_tv.setText(user.getName());
+		tv_name.setText(user.getNickname());
+		titlebar_tv.setText(user.getNickname());
 
-		Glide.with(this).load(user.getAvatar_large()).into(iv_avatar);
-		tv_follows.setText("关注 " + user.getFriends_count());
-		tv_fans.setText("粉丝 " + user.getFollowers_count());
-		tv_sign.setText("简介:" + user.getDescription());
+		Glide.with(this).load(user.getAvatarUrl()).into(iv_avatar);
+		tv_follows.setText("关注");
+		tv_fans.setText("粉丝");
+		tv_sign.setText("简介: 这个人很懒什么都没有留下");
 	}
 	
 	private void loadUserInfo() {
-		WeiboHttpRequest.getSingleton()
-				.getApiService()
-				.usersShow(accessToken.getUid())
-				.compose(RxComposer.<User>common(this))
-				.subscribe(new SimpleDisObserver<User>() {
-					@Override
-					public void onNext(User user) {
-						setUserInfo();
-					}
-				});
+		// TODO: 2017/8/15 id
+//		WbHttpRequest.getInstance()
+//				.getApiService()
+//				.getUserById()
+//				.compose(RxComposer.<User>commonProgress(this))
+//				.subscribe(new SimpleDisObserver<User>() {
+//					@Override
+//					public void onNext(User user) {
+//						setUserInfo();
+//					}
+//				});
 	}
 	
 	private void loadStatuses(final int page) {
 		// userName为空是看自己，否则看别人
-		String uid;
-		String uname;
-		if (TextUtils.isEmpty(userName)) {
-			uid = accessToken.getUid();
-			uname = null;
-		} else {
-			uid = null;
-			uname = userName;
-		}
-		WeiboHttpRequest.getSingleton()
-				.getApiService()
-				.statusesUser_timeline(uid, uname, page)
-				.compose(RxComposer.<StatusListResponse>common(this))
-				.subscribe(new SimpleDisObserver<StatusListResponse>() {
-					@Override
-					public void onNext(StatusListResponse response) {
-						showLog("status comments = " + response);
-
-						if(page == 1) {
-							statuses.clear();
-						}
-
-						addStatus(response);
-					}
-
-					@Override
-					public void onError(Throwable e) {
-						// TODO: 2017/8/8
-//						lv_home.onRefreshComplete();
-					}
-				});
+//		String uid;
+//		String uname;
+//		if (TextUtils.isEmpty(userName)) {
+//			uid = accessToken.getUid();
+//			uname = null;
+//		} else {
+//			uid = null;
+//			uname = userName;
+//		}
+//		WeiboHttpRequest.getSingleton()
+//				.getApiService()
+//				.statusesUser_timeline(uid, uname, page)
+//				.compose(RxComposer.<StatusListResponse>commonProgress(this))
+//				.subscribe(new SimpleDisObserver<StatusListResponse>() {
+//					@Override
+//					public void onNext(StatusListResponse response) {
+//						showLog("status comments = " + response);
+//
+//						if(page == 1) {
+//							statuses.clear();
+//						}
+//
+//						addStatus(response);
+//					}
+//
+//					@Override
+//					public void onError(Throwable e) {
+//						// TODO: 2017/8/8
+////						lv_home.onRefreshComplete();
+//					}
+//				});
 	}
 	
-	private void addStatus(StatusListResponse response) {
-		for(Status status : response.getStatuses()) {
-			if(!statuses.contains(status)) {
-				statuses.add(status);
-			}
-		}
-		statusAdapter.notifyDataSetChanged();
-		
-		if(curPage < response.getTotal_number()) {
-			addFootView(footView);
-		} else {
-			removeFootView(footView);
-		}
-	}
+//	private void addStatus(StatusListResponse response) {
+//		for(Status status : response.getStatuses()) {
+//			if(!statuses.contains(status)) {
+//				statuses.add(status);
+//			}
+//		}
+//		statusAdapter.notifyDataSetChanged();
+//
+//		if(curPage < response.getTotal_number()) {
+//			addFootView(footView);
+//		} else {
+//			removeFootView(footView);
+//		}
+//	}
 	
 	private void addFootView(View footView) {
 		if(lv_user_info.getFooterViewsCount() == 1) {

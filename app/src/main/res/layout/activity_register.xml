@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.boredream.weibo.activity.RegisterActivity">
+
+    <com.boredream.bdcodehelper.view.TitleBarView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.boredream.bdcodehelper.view.TitleBarView>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="@dimen/margin_medium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/et_username"
+            style="@style/EditTextSingleLine"
+            android:inputType="number"
+            android:maxLength="11"
+            android:hint="请输入登录用户名"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/et_nickname"
+            style="@style/EditTextSingleLine"
+            android:hint="请输入昵称"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/et_password"
+            style="@style/EditTextSingleLine"
+            android:inputType="textPassword"
+            android:hint="请输入密码"
+            android:maxLength="25"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+        <View
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="0dp" />
+
+        <Button
+            style="@style/ButtonPrimary"
+            android:id="@+id/btn_register"
+            android:text="注册"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</LinearLayout>

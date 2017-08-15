@@ -1,91 +1,86 @@
 package com.boredream.weibo.activity;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.constants.WeiboConstants;
-import com.sina.weibo.sdk.WbSdk;
-import com.sina.weibo.sdk.auth.AccessTokenKeeper;
-import com.sina.weibo.sdk.auth.AuthInfo;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
-import com.sina.weibo.sdk.auth.WbAuthListener;
-import com.sina.weibo.sdk.auth.WbConnectErrorMessage;
-import com.sina.weibo.sdk.auth.sso.SsoHandler;
+import com.boredream.weibo.entity.User;
+import com.boredream.weibo.presenter.LoginContract;
+import com.boredream.weibo.presenter.LoginPresenter;
 
-public class LoginActivity extends BaseActivity {
+public class LoginActivity extends BaseActivity implements View.OnClickListener, LoginContract.View {
 
-    private Oauth2AccessToken mAccessToken;
-    private SsoHandler mSsoHandler;
+    private TitleBarView title;
+    private EditText et_username;
+    private EditText et_password;
+    private Button btn_login;
+    private TextView tv_forget_psw;
+    private LinearLayout ll_regist;
+
+    private LoginPresenter loginPresenter;
 
     @Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_login);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_login);
 
-        AuthInfo mAuthInfo = new AuthInfo(this,
-                WeiboConstants.APP_KEY,
-                WeiboConstants.REDIRECT_URL,
-                WeiboConstants.SCOPE);
-        WbSdk.install(this, mAuthInfo);
+        initView();
+        loginPresenter = new LoginPresenter(this);
 
-        mSsoHandler = new SsoHandler(this);
-		findViewById(R.id.btn_login).setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View arg0) {
-                mSsoHandler.authorizeClientSso(new SelfWbAuthListener());
-//				mSsoHandler.authorize(new SelfWbAuthListener());
-			}
-		});
-	}
-	
-	/**
-     * 当 SSO 授权 Activity 退出时，该函数被调用。
-     * 
-     * @see {@link Activity#onActivityResult}
-     */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        
-        // SSO 授权回调
-        // 重要：发起 SSO 登陆的 Activity 必须重写 onActivityResult
-        if (mSsoHandler != null) {
-            mSsoHandler.authorizeCallBack(requestCode, resultCode, data);
-        }
+        // FIXME: 2017/7/4 mock
+        et_username.setText("18551681236");
+        et_password.setText("123456");
     }
 
-    private class SelfWbAuthListener implements WbAuthListener {
-        @Override
-        public void onSuccess(final Oauth2AccessToken token) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mAccessToken = token;
-                    if (mAccessToken.isSessionValid()) {
-                        // 保存 Token 到 SharedPreferences
-                        AccessTokenKeeper.writeAccessToken(LoginActivity.this, mAccessToken);
-                        showTip("登陆成功");
-                        intent2Activity(MainActivity.class);
-                    } else {
-                        showTip("登陆失败" + token.toString());
-                    }
-                }
-            });
-        }
+    private void initView() {
+        title = (TitleBarView) findViewById(R.id.title);
+        et_username = (EditText) findViewById(R.id.et_username);
+        et_password = (EditText) findViewById(R.id.et_password);
+        btn_login = (Button) findViewById(R.id.btn_login);
+        tv_forget_psw = (TextView) findViewById(R.id.tv_forget_psw);
+        ll_regist = (LinearLayout) findViewById(R.id.ll_regist);
 
-        @Override
-        public void cancel() {
-            showTip("取消");
-        }
+        btn_login.setOnClickListener(this);
+        tv_forget_psw.setOnClickListener(this);
+        ll_regist.setOnClickListener(this);
 
-        @Override
-        public void onFailure(WbConnectErrorMessage errorMessage) {
-            showTip(errorMessage.toString());
+        title.setTitleText("登录");
+    }
+
+    private void submit() {
+        String username = et_username.getText().toString().trim();
+        String password = et_password.getText().toString().trim();
+        showProgress();
+        loginPresenter.login(username, password);
+    }
+
+    @Override
+    public void loginSuccess(User user) {
+        dismissProgress();
+        startActivity(new Intent(this, MainActivity.class));
+    }
+
+    @Override
+    public void loginError() {
+        dismissProgress();
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_login:
+                submit();
+                break;
+            case R.id.ll_regist:
+                intent2Activity(RegisterActivity.class);
+                break;
         }
     }
 

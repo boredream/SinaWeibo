@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.view.ViewPager;
-import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -13,8 +12,7 @@ import android.widget.TextView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.WeiboImageBrowserAdapter;
-import com.boredream.weibo.entity.PicUrls;
-import com.boredream.weibo.entity.Status;
+import com.boredream.weibo.entity.Goods;
 
 import java.util.ArrayList;
 
@@ -24,10 +22,10 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 	private Button btn_save;
 	private Button btn_original_image;
 
-	private Status status;
+	private Goods status;
 	private int position;
 	private WeiboImageBrowserAdapter adapter;
-	private ArrayList<PicUrls> imgUrls;
+	private ArrayList<String> imgUrls;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,10 +39,10 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 	}
 
 	private void initData() {
-		status = (Status) getIntent().getSerializableExtra("status");
+		status = (Goods) getIntent().getSerializableExtra("status");
 		position = getIntent().getIntExtra("position", 0);
 		// 获取图片数据集合(单图也有对应的集合,集合的size为1)
-		imgUrls = status.getPic_urls();
+		imgUrls = status.getImages();
 	}
 
 	private void initView() {
@@ -70,47 +68,17 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 		} else {
 			tv_image_index.setVisibility(View.GONE);
 		}
-		
-		vp_image_brower.setOnPageChangeListener(new OnPageChangeListener() {
-			
-			@Override
-			public void onPageSelected(int arg0) {
-				int index = arg0 % size;
-				tv_image_index.setText((index+1) + "/" + size);
-				
-				PicUrls pic = adapter.getPic(arg0);
-				btn_original_image.setVisibility(pic.isShowOriImag() ? 
-						View.GONE : View.VISIBLE);
-			}
-			
-			@Override
-			public void onPageScrolled(int arg0, float arg1, int arg2) {
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			public void onPageScrollStateChanged(int arg0) {
-				// TODO Auto-generated method stub
-				
-			}
-		});
-				
+
 		vp_image_brower.setCurrentItem(initPosition);
 	}
 
 	@Override
 	public void onClick(View v) {
-		PicUrls picUrl = adapter.getPic(vp_image_brower.getCurrentItem());
-		
 		switch (v.getId()) {
 		case R.id.btn_save:
 			Bitmap bitmap = adapter.getBitmap(vp_image_brower.getCurrentItem());
 			
-			boolean showOriImag = picUrl.isShowOriImag();
-			String fileName = "img-" + (showOriImag?"ori-" : "mid-") + picUrl.getImageId();
-			
-			String title = fileName.substring(0, fileName.lastIndexOf("."));
+			String title = "image-" + System.currentTimeMillis();
 			String insertImage = MediaStore.Images.Media.insertImage(
 					getContentResolver(), bitmap, title, "BoreWBImage");
 			if(insertImage == null) {
@@ -118,19 +86,9 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 			} else {
 				showTip("图片保存成功");
 			}
-			
-//			try {
-//				ImageUtils.saveFile(this, bitmap, fileName);
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-			
 			break;
 		case R.id.btn_original_image:
-			picUrl.setShowOriImag(true);
-			adapter.notifyDataSetChanged();
-			
-			btn_original_image.setVisibility(View.GONE);
+			// TODO: 2017/8/15
 			break;
 		}
 	}

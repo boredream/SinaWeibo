@@ -1,6 +1,5 @@
 package com.boredream.weibo.activity;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -8,19 +7,10 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
-import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.entity.Status;
-import com.boredream.weibo.entity.response.CommentListResponse;
-import com.boredream.weibo.net.WeiboHttpRequest;
-import com.boredream.weibo.net.RxComposer;
+import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.utils.TitleBuilder;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 public class WriteCommentActivity extends BaseActivity implements OnClickListener {
 	// 评论输入框
@@ -32,7 +22,7 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 	private ImageView iv_emoji;
 	private ImageView iv_add;
 	// 待评论的微博
-	private Status status;
+	private Goods status;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -41,7 +31,7 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 		setContentView(R.layout.activity_write_status);
 
 		// 获取Intent传入的微博
-		status = (Status) getIntent().getSerializableExtra("status");
+		status = (Goods) getIntent().getSerializableExtra("status");
 		
 		initView();
 
@@ -87,33 +77,23 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 			return;
 		}
 
-		Map<String, String> request = new HashMap<>();
-		request.put("access_token", accessToken.getToken());
-		request.put("id", String.valueOf(status.getId()));
-		try {
-			comment = URLEncoder.encode(comment, "utf-8");
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-		request.put("comment", comment);
-
-		WeiboHttpRequest.getSingleton()
-				.getApiService()
-				.commentsCreate(request)
-				.compose(RxComposer.<CommentListResponse>common(this))
-				.subscribe(new SimpleDisObserver<CommentListResponse>() {
-					@Override
-					public void onNext(CommentListResponse commentListResponse) {
-						showTip("微博发送成功");
-
-						// 微博发送成功后,设置Result结果数据,然后关闭本页面
-						Intent data = new Intent();
-						data.putExtra("sendCommentSuccess", true);
-						setResult(RESULT_OK, data);
-
-						finish();
-					}
-				});
+//		WbHttpRequest.getInstance()
+//				.getApiService()
+//				.commentsCreate(request)
+//				.compose(RxComposer.<CommentListResponse>commonProgress(this))
+//				.subscribe(new SimpleDisObserver<CommentListResponse>() {
+//					@Override
+//					public void onNext(CommentListResponse commentListResponse) {
+//						showTip("微博发送成功");
+//
+//						// 微博发送成功后,设置Result结果数据,然后关闭本页面
+//						Intent data = new Intent();
+//						data.putExtra("sendCommentSuccess", true);
+//						setResult(RESULT_OK, data);
+//
+//						finish();
+//					}
+//				});
 	}
 
 	@Override

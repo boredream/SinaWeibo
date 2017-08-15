@@ -11,16 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.SimpleDisObserver;
-import com.boredream.weibo.BaseApplication;
 import com.boredream.weibo.BaseFragment;
 import com.boredream.weibo.R;
 import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.adapter.UserItemAdapter;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.UserItem;
-import com.boredream.weibo.net.WeiboHttpRequest;
-import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.bumptech.glide.Glide;
 
@@ -75,17 +71,17 @@ public class UserFragment extends BaseFragment {
 	}
 
 	private void loadUserInfo() {
-		WeiboHttpRequest.getSingleton()
-				.getApiService()
-                .usersShow(accessToken.getUid())
-				.compose(RxComposer.<User>common(activity))
-                .subscribe(new SimpleDisObserver<User>() {
-                    @Override
-                    public void onNext(User user) {
-                        BaseApplication.currentUser = currentUser = user;
-                        setUserInfo();
-                    }
-                });
+//		WeiboHttpRequest.getSingleton()
+//				.getApiService()
+//                .usersShow(accessToken.getUid())
+//				.compose(RxComposer.<User>commonProgress(activity))
+//                .subscribe(new SimpleDisObserver<User>() {
+//                    @Override
+//                    public void onNext(User user) {
+//                        BaseApplication.currentUser = currentUser = user;
+//                        setUserInfo();
+//                    }
+//                });
 	}
 
 	private void initView() {
@@ -119,12 +115,8 @@ public class UserFragment extends BaseFragment {
 	// 设置用户信息
 	private void setUserInfo() {
 		if(currentUser == null) return;
-		tv_subhead.setText(currentUser.getName());
-		tv_caption.setText("简介:" + currentUser.getDescription());
-		Glide.with(this).load(currentUser.getAvatar_large()).into(iv_avatar);
-		tv_status_count.setText("" + currentUser.getStatuses_count());
-		tv_follow_count.setText("" + currentUser.getFriends_count());
-		tv_fans_count.setText("" + currentUser.getFollowers_count());
+		tv_subhead.setText(currentUser.getNickname());
+		Glide.with(this).load(currentUser.getAvatarUrl()).into(iv_avatar);
 	}
 	
 	// 设置栏列表

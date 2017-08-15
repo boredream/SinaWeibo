@@ -17,7 +17,6 @@ import com.boredream.weibo.R;
 import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.User;
-import com.boredream.weibo.utils.DateUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.bumptech.glide.Glide;
 
@@ -72,9 +71,10 @@ public class StatusCommentAdapter extends BaseAdapter {
 		Comment comment = getItem(position);
 		final User user = comment.getUser();
 
-		Glide.with(context).load(user.getProfile_image_url()).into(holder.iv_avatar);
-		holder.tv_subhead.setText(user.getName());
-		holder.tv_caption.setText(DateUtils.getShortTime(comment.getCreated_at()));
+		Glide.with(context).load(user.getAvatarUrl()).into(holder.iv_avatar);
+		holder.tv_subhead.setText(user.getNickname());
+		// FIXME: 2017/8/15
+//		holder.tv_caption.setText(DateUtils.getShortTime(comment.getCreated_at()));
 		SpannableString weiboContent = StringUtils.getWeiboContent(
 				context, holder.tv_comment, comment.getText());
 		holder.tv_comment.setText(weiboContent);
@@ -83,7 +83,7 @@ public class StatusCommentAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(context, UserInfoActivity.class);
-				intent.putExtra("userName", user.getName());
+				intent.putExtra("userName", user.getNickname());
 				context.startActivity(intent);
 			}
 		});
@@ -92,7 +92,7 @@ public class StatusCommentAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(context, UserInfoActivity.class);
-				intent.putExtra("userName", user.getName());
+				intent.putExtra("userName", user.getNickname());
 				context.startActivity(intent);
 			}
 		});

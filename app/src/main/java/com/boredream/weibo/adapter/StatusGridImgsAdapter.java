@@ -10,7 +10,6 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout.LayoutParams;
 
 import com.boredream.weibo.R;
-import com.boredream.weibo.entity.PicUrls;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -18,9 +17,9 @@ import java.util.ArrayList;
 public class StatusGridImgsAdapter extends BaseAdapter {
 
 	private Context context;
-	private ArrayList<PicUrls> datas;
+	private ArrayList<String> datas;
 
-	public StatusGridImgsAdapter(Context context, ArrayList<PicUrls> datas) {
+	public StatusGridImgsAdapter(Context context, ArrayList<String> datas) {
 		this.context = context;
 		this.datas = datas;
 	}
@@ -31,7 +30,7 @@ public class StatusGridImgsAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public PicUrls getItem(int position) {
+	public String getItem(int position) {
 		return datas.get(position);
 	}
 
@@ -62,8 +61,8 @@ public class StatusGridImgsAdapter extends BaseAdapter {
 		LayoutParams params = new LayoutParams(itemWidth, itemWidth);
 		holder.iv_image.setLayoutParams(params);
 		
-		PicUrls url = getItem(position);
-		Glide.with(context).load(url.getThumbnail_pic()).into(holder.iv_image);
+		String url = getItem(position);
+		Glide.with(context).load(url).into(holder.iv_image);
 
 		return convertView;
 	}

@@ -6,14 +6,13 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.widget.ImageView;
 
-import com.boredream.bdcodehelper.adapter.ImageBrowserAdapter;
-import com.boredream.weibo.entity.PicUrls;
+import com.boredream.bdcodehelper.adapter.ImageStrBrowserAdapter;
 
 import java.util.List;
 
-public class WeiboImageBrowserAdapter extends ImageBrowserAdapter<PicUrls> {
+public class WeiboImageBrowserAdapter extends ImageStrBrowserAdapter {
 
-	public WeiboImageBrowserAdapter(Activity context, List<PicUrls> picUrls) {
+	public WeiboImageBrowserAdapter(Activity context, List<String> picUrls) {
 		super(context, picUrls);
 	}
 
@@ -22,7 +21,7 @@ public class WeiboImageBrowserAdapter extends ImageBrowserAdapter<PicUrls> {
 		return POSITION_NONE;
 	}
 
-	public PicUrls getPic(int position) {
+	public String getPic(int position) {
 		int index = position % imageUrls.size();
 		return imageUrls.get(index);
 	}

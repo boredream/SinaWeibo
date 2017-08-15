@@ -6,22 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.boredream.bdcodehelper.lean.net.LcRxCompose;
 import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseFragment;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusAdapter;
-import com.boredream.weibo.constants.WeiboConstants;
-import com.boredream.weibo.entity.Status;
-import com.boredream.weibo.entity.response.StatusListResponse;
-import com.boredream.weibo.net.WeiboHttpRequest;
+import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.net.RxComposer;
+import com.boredream.weibo.net.WbHttpRequest;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import com.sina.weibo.sdk.auth.AuthInfo;
-import com.sina.weibo.sdk.web.WeiboPageUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,10 +31,9 @@ public class HomeFragment extends BaseFragment {
 
 	private SmartRefreshLayout refresh;
 	private ListView lv_home;
-	private View footView;
-	
+
 	private StatusAdapter adapter;
-	private List<Status> statuses = new ArrayList<>();
+	private List<Goods> statuses = new ArrayList<>();
 	private int curPage = 1;
 
 	@Override
@@ -69,32 +65,18 @@ public class HomeFragment extends BaseFragment {
 				loadData(curPage + 1);
 			}
 		});
-		
-		footView = View.inflate(activity, R.layout.footview_loading, null);
 	}
 
 	public void loadData(final int page) {
-		AuthInfo authInfo = new AuthInfo(activity,
-				WeiboConstants.APP_KEY,
-				WeiboConstants.REDIRECT_URL,
-				WeiboConstants.SCOPE);
-
-		WeiboPageUtils.getInstance(activity, authInfo)
-				.commentWeibo("111");
-
-
-		if (1==1) {
-			return;
-		}
-
-		WeiboHttpRequest.getSingleton()
+		WbHttpRequest.getInstance()
 				.getApiService()
-				.statusesHome_timeline(page)
-				.compose(RxComposer.<StatusListResponse>common(activity))
-				.subscribe(new SimpleDisObserver<StatusListResponse>() {
+				.statusesHome(page)
+				.compose(LcRxCompose.<Goods>handleListResponse())
+				.compose(RxComposer.<ArrayList<Goods>>commonRefresh(activity, page>1, refresh))
+				.subscribe(new SimpleDisObserver<ArrayList<Goods>>() {
 
 					@Override
-					public void onNext(@NonNull StatusListResponse response) {
+					public void onNext(@NonNull ArrayList<Goods> response) {
 						if(page == 1) {
 							statuses.clear();
 						}
@@ -102,40 +84,22 @@ public class HomeFragment extends BaseFragment {
 
 						addData(response);
 					}
-
-					@Override
-					public void onError(@NonNull Throwable e) {
-						// TODO: 2017/8/8
-						// lv_home.onRefreshComplete();
-					}
-
 				});
 	}
 	
-	private void addData(StatusListResponse resBean) {
-		for(Status status : resBean.getStatuses()) {
+	private void addData(ArrayList<Goods> response) {
+		for(Goods status : response) {
 			if(!statuses.contains(status)) {
 				statuses.add(status);
 			}
 		}
 		adapter.notifyDataSetChanged();
-		
-		if(curPage < resBean.getTotal_number()) {
-			addFootView(footView);
-		} else {
-			removeFootView(footView);
-		}
-	}
-	
-	private void addFootView(View footView) {
-		if(lv_home.getFooterViewsCount() == 1) {
-			lv_home.addFooterView(footView);
-		}
-	}
-	
-	private void removeFootView(View footView) {
-		if(lv_home.getFooterViewsCount() > 1) {
-			lv_home.removeFooterView(footView);
-		}
+
+		// FIXME: 2017/8/15
+//		if(curPage < resBean.getTotal_number()) {
+//			addFootView(footView);
+//		} else {
+//			removeFootView(footView);
+//		}
 	}
 }

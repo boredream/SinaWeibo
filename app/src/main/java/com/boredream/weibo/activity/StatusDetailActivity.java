@@ -2,7 +2,6 @@ package com.boredream.weibo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
@@ -22,19 +21,13 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusCommentAdapter;
 import com.boredream.weibo.adapter.StatusGridImgsAdapter;
 import com.boredream.weibo.entity.Comment;
-import com.boredream.weibo.entity.PicUrls;
-import com.boredream.weibo.entity.Status;
+import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
-import com.boredream.weibo.entity.response.CommentListResponse;
-import com.boredream.weibo.net.WeiboHttpRequest;
-import com.boredream.weibo.net.RxComposer;
-import com.boredream.weibo.utils.DateUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.bumptech.glide.Glide;
@@ -81,8 +74,6 @@ public class StatusDetailActivity extends BaseActivity implements
 	// listView - 下拉刷新控件
 	private SmartRefreshLayout refresh;
 	private ListView lv_status_detail;
-	// footView - 加载更多
-	private View footView;
 	// bottom_control - 底部互动栏,包括转发/评论/点赞
 	private LinearLayout ll_bottom_control;
 	private LinearLayout ll_share_bottom;
@@ -93,13 +84,13 @@ public class StatusDetailActivity extends BaseActivity implements
 	private TextView tv_like_bottom;
 
 	// 详情页的微博信息
-	private Status status;
+	private Goods status;
 	// 是否需要滚动至评论部分
 	private boolean scroll2Comment;
 	// 评论当前已加载至的页数
 	private int curPage = 1;
 	
-	private List<Comment> comments = new ArrayList<Comment>();
+	private List<Comment> comments = new ArrayList<>();
 	private StatusCommentAdapter adapter;
 
 	@Override
@@ -109,7 +100,7 @@ public class StatusDetailActivity extends BaseActivity implements
 		setContentView(R.layout.activity_status_detail);
 
 		// 获取intent传入的信息
-		status = (Status) getIntent().getSerializableExtra("status");
+		status = (Goods) getIntent().getSerializableExtra("status");
 		scroll2Comment = getIntent().getBooleanExtra("scroll2Comment", false);
 
 		// 初始化View
@@ -119,7 +110,6 @@ public class StatusDetailActivity extends BaseActivity implements
 		setData();
 		
 		// 开始加载第一页评论数据
-		addFootView(footView);
 		loadComments(1);
 	}
 
@@ -193,8 +183,6 @@ public class StatusDetailActivity extends BaseActivity implements
 		refresh = (SmartRefreshLayout) findViewById(R.id.refresh);
 		adapter = new StatusCommentAdapter(this, comments);
 		lv_status_detail.setAdapter(adapter);
-		// footView - 加载更多
-		footView = View.inflate(this, R.layout.footview_loading, null);
 		// Refresh View - ListView
 		lv_status_detail.addHeaderView(status_detail_info);
 		lv_status_detail.addHeaderView(status_detail_tab);
@@ -247,61 +235,61 @@ public class StatusDetailActivity extends BaseActivity implements
 	private void setData() {
 		// listView headerView - 微博信息
 		User user = status.getUser();
-		Glide.with(this).load(user.getProfile_image_url()).into(iv_avatar);
-		tv_subhead.setText(user.getName());
-		tv_caption.setText(DateUtils.getShortTime(status.getCreated_at()) +
-				"  来自" + Html.fromHtml(status.getSource()));
+		Glide.with(this).load(user.getAvatarUrl()).into(iv_avatar);
+		tv_subhead.setText(user.getNickname());
+
+		// FIXME: 2017/8/15
+//		tv_caption.setText(DateUtils.getShortTime(status.getCreated_at()) +
+//				"  来自" + Html.fromHtml(status.getSource()));
 
 		setImages(status, include_status_image, gv_images, iv_image);
 
-		if (TextUtils.isEmpty(status.getText())) {
+		if (TextUtils.isEmpty(status.getName())) {
 			tv_content.setVisibility(View.GONE);
 		} else {
 			tv_content.setVisibility(View.VISIBLE);
 			SpannableString weiboContent = StringUtils.getWeiboContent(
-					this, tv_content, status.getText());
+					this, tv_content, status.getName());
 			tv_content.setText(weiboContent);
 		}
 
-		Status retweetedStatus = status.getRetweeted_status();
-		if (retweetedStatus != null) {
-			include_retweeted_status.setVisibility(View.VISIBLE);
-			String retweetContent = "@" + retweetedStatus.getUser().getName()
-					+ ":" + retweetedStatus.getText();
-			SpannableString weiboContent = StringUtils.getWeiboContent(
-					this, tv_retweeted_content, retweetContent);
-			tv_retweeted_content.setText(weiboContent);
-			setImages(retweetedStatus, fl_retweeted_imageview,
-					gv_retweeted_images, iv_retweeted_image);
-		} else {
-			include_retweeted_status.setVisibility(View.GONE);
-		}
+		// FIXME: 2017/8/15 转发
+//		Goods retweetedStatus = status.getRetweeted_status();
+//		if (retweetedStatus != null) {
+//			include_retweeted_status.setVisibility(View.VISIBLE);
+//			String retweetContent = "@" + retweetedStatus.getUser().getName()
+//					+ ":" + retweetedStatus.getText();
+//			SpannableString weiboContent = StringUtils.getWeiboContent(
+//					this, tv_retweeted_content, retweetContent);
+//			tv_retweeted_content.setText(weiboContent);
+//			setImages(retweetedStatus, fl_retweeted_imageview,
+//					gv_retweeted_images, iv_retweeted_image);
+//		} else {
+//			include_retweeted_status.setVisibility(View.GONE);
+//		}
 		
 		// shadow_tab - 顶部悬浮的菜单栏
-		shadow_rb_retweets.setText("转发 " + status.getReposts_count());
-		shadow_rb_comments.setText("评论 " + status.getComments_count());
-		shadow_rb_likes.setText("赞 " + status.getAttitudes_count());
+		shadow_rb_retweets.setText("转发");
+		shadow_rb_comments.setText("评论");
+		shadow_rb_likes.setText("赞");
 		// listView headerView - 添加至列表中作为header的菜单栏
-		rb_retweets.setText("转发 " + status.getReposts_count());
-		rb_comments.setText("评论 " + status.getComments_count());
-		rb_likes.setText("赞 " + status.getAttitudes_count());
+		rb_retweets.setText("转发");
+		rb_comments.setText("评论");
+		rb_likes.setText("赞");
 		
 		// bottom_control - 底部互动栏,包括转发/评论/点赞
-		tv_share_bottom.setText(status.getReposts_count() == 0 ?
-				"转发" : status.getReposts_count() + "");
-		tv_comment_bottom.setText(status.getComments_count() == 0 ?
-				"评论" : status.getComments_count() + "");
-		tv_like_bottom.setText(status.getAttitudes_count() == 0 ?
-				"赞" : status.getAttitudes_count() + "");
+		tv_share_bottom.setText("转发");
+		tv_comment_bottom.setText("评论");
+		tv_like_bottom.setText("赞");
 	}
 
-	private void setImages(final Status status, ViewGroup vgContainer, GridView gvImgs, final ImageView ivImg) {
+	private void setImages(final Goods status, ViewGroup vgContainer, GridView gvImgs, final ImageView ivImg) {
 		if (status == null) {
 			return;
 		}
 
-		ArrayList<PicUrls> picUrls = status.getPic_urls();
-		String picUrl = status.getBmiddle_pic();
+		ArrayList<String> picUrls = status.getImages();
+		String picUrl = status.getImage();
 
 		if (picUrls != null && picUrls.size() == 1) {
 			vgContainer.setVisibility(View.VISIBLE);
@@ -347,60 +335,61 @@ public class StatusDetailActivity extends BaseActivity implements
 	 *            页数
 	 */
 	private void loadComments(final int page) {
-		WeiboHttpRequest.getSingleton()
-				.getApiService()
-				.commentsShow(status.getId(), page)
-				.compose(RxComposer.<CommentListResponse>common(this))
-				.subscribe(new SimpleDisObserver<CommentListResponse>() {
-					@Override
-					public void onNext(CommentListResponse response) {
-						// 如果是加载第一页(第一次进入,下拉刷新)时,先清空已有数据
-						if (page == 1) {
-							comments.clear();
-						}
-
-						// 更新评论数信息
-						tv_comment_bottom.setText(response.getTotal_number() == 0 ?
-								"评论" : response.getTotal_number() + "");
-						shadow_rb_comments.setText("评论 " + response.getTotal_number());
-						rb_comments.setText("评论 " + response.getTotal_number());
-
-						// 将获取的评论信息添加到列表上
-						addData(response);
-
-						// 判断是否需要滚动至评论部分
-						if(scroll2Comment) {
-							lv_status_detail.setSelection(2);
-							scroll2Comment = false;
-						}
-					}
-
-					@Override
-					public void onError(Throwable e) {
-						// 通知下拉刷新控件完成刷新
-						// TODO: 2017/8/8
-//						refresh.onRefreshComplete();
-					}
-				});
+		// FIXME: 2017/8/15
+//		WbHttpRequest.getInstance()
+//				.getApiService()
+//				.commentsShow(status.getId(), page)
+//				.compose(RxComposer.<CommentListResponse>commonProgress(this))
+//				.subscribe(new SimpleDisObserver<CommentListResponse>() {
+//					@Override
+//					public void onNext(CommentListResponse response) {
+//						// 如果是加载第一页(第一次进入,下拉刷新)时,先清空已有数据
+//						if (page == 1) {
+//							comments.clear();
+//						}
+//
+//						// 更新评论数信息
+//						tv_comment_bottom.setText(response.getTotal_number() == 0 ?
+//								"评论" : response.getTotal_number() + "");
+//						shadow_rb_comments.setText("评论 " + response.getTotal_number());
+//						rb_comments.setText("评论 " + response.getTotal_number());
+//
+//						// 将获取的评论信息添加到列表上
+//						addData(response);
+//
+//						// 判断是否需要滚动至评论部分
+//						if(scroll2Comment) {
+//							lv_status_detail.setSelection(2);
+//							scroll2Comment = false;
+//						}
+//					}
+//
+//					@Override
+//					public void onError(Throwable e) {
+//						// 通知下拉刷新控件完成刷新
+//						// TODO: 2017/8/8
+////						refresh.onRefreshComplete();
+//					}
+//				});
 	}
 
-	private void addData(CommentListResponse response) {
-		// 将获取到的数据添加至列表中,重复数据不添加
-		for (Comment comment : response.getComments()) {
-			if (!comments.contains(comment)) {
-				comments.add(comment);
-			}
-		}
-		// 添加完后,通知ListView刷新页面数据
-		adapter.notifyDataSetChanged();
-		
-		// 用条数判断,当前评论数是否达到总评论数,未达到则添加更多加载footView,反之移除
-		if (comments.size() < response.getTotal_number()) {
-			addFootView(footView);
-		} else {
-			removeFootView(footView);
-		}
-	}
+//	private void addData(CommentListResponse response) {
+//		// 将获取到的数据添加至列表中,重复数据不添加
+//		for (Comment comment : response.getComments()) {
+//			if (!comments.contains(comment)) {
+//				comments.add(comment);
+//			}
+//		}
+//		// 添加完后,通知ListView刷新页面数据
+//		adapter.notifyDataSetChanged();
+//
+//		// 用条数判断,当前评论数是否达到总评论数,未达到则添加更多加载footView,反之移除
+//		if (comments.size() < response.getTotal_number()) {
+//			addFootView(footView);
+//		} else {
+//			removeFootView(footView);
+//		}
+//	}
 
 	private void addFootView(View footView) {
 		if (lv_status_detail.getFooterViewsCount() == 1) {

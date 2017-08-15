@@ -1,55 +1,60 @@
 package com.boredream.weibo.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 
+import com.boredream.bdcodehelper.lean.net.LcTokenKeeper;
+import com.boredream.bdcodehelper.utils.LogUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.sina.weibo.sdk.auth.AccessTokenKeeper;
-import com.sina.weibo.sdk.auth.Oauth2AccessToken;
+import com.boredream.weibo.constants.UserInfoKeeper;
+import com.boredream.weibo.entity.User;
+import com.boredream.weibo.presenter.LoginContract;
+import com.boredream.weibo.presenter.LoginPresenter;
 
-public class SplashActivity extends BaseActivity {
-	
-	private static final int WHAT_INTENT2LOGIN = 1;
-	private static final int WHAT_INTENT2MAIN = 2;
-	private static final long SPLASH_DUR_TIME = 1000;
+public class SplashActivity extends BaseActivity implements LoginContract.View {
 
-	private Oauth2AccessToken accessToken;
-	
-	private Handler handler = new Handler() {
+	private LoginPresenter loginPresenter;
 
-		@Override
-		public void handleMessage(Message msg) {
-			super.handleMessage(msg);
-			
-			switch (msg.what) {
-			case WHAT_INTENT2LOGIN:
-				intent2Activity(LoginActivity.class);
-				finish();
-				break;
-			case WHAT_INTENT2MAIN:
-				intent2Activity(MainActivity.class);
-				finish();
-				break;
-			default:
-				break;
-			}
-		}
-		
-	};
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
 		setContentView(R.layout.activity_splash);
-		
-		accessToken = AccessTokenKeeper.readAccessToken(this);
-		if(accessToken.isSessionValid()) {
-			handler.sendEmptyMessageDelayed(WHAT_INTENT2MAIN, SPLASH_DUR_TIME);
-		} else {
-			handler.sendEmptyMessageDelayed(WHAT_INTENT2LOGIN, SPLASH_DUR_TIME);
+
+		loginPresenter = new LoginPresenter(this);
+
+		// 避免从桌面启动程序后，会重新实例化入口类的activity
+		if (!this.isTaskRoot()) {
+			Intent intent = getIntent();
+			if (intent != null) {
+				String action = intent.getAction();
+				if (intent.hasCategory(Intent.CATEGORY_LAUNCHER) && Intent.ACTION_MAIN.equals(action)) {
+					finish();
+					return;
+				}
+			}
 		}
+
+		autoLogin();
 	}
+
+	private void autoLogin() {
+		String sessionToken = LcTokenKeeper.getInstance().getSessionToken();
+		loginPresenter.autoLogin(sessionToken);
+	}
+
+	@Override
+	public void loginSuccess(User user) {
+		LogUtils.showLog("loginSuccess");
+		intent2Activity(MainActivity.class);
+		finish();
+	}
+
+	@Override
+	public void loginError() {
+		LogUtils.showLog("loginError");
+		intent2Activity(LoginActivity.class);
+		finish();
+	}
+
 }

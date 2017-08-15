@@ -19,26 +19,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.EmotionGvAdapter;
 import com.boredream.weibo.adapter.EmotionPagerAdapter;
 import com.boredream.weibo.adapter.WriteStatusGridImgsAdapter;
-import com.boredream.weibo.entity.Status;
-import com.boredream.weibo.net.WeiboHttpRequest;
-import com.boredream.weibo.net.RxComposer;
+import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.utils.EmotionUtils;
 import com.boredream.weibo.utils.ImageUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.boredream.weibo.utils.TitleBuilder;
-import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class WriteStatusActivity extends BaseActivity implements OnClickListener, OnItemClickListener {
 
@@ -67,8 +61,8 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	private ArrayList<Uri> imgUris = new ArrayList<Uri>();
 	private EmotionPagerAdapter emotionPagerGvAdapter;
 	
-	private Status retweeted_status;
-	private Status cardStatus;
+	private Goods retweeted_status;
+	private Goods cardStatus;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +70,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 
 		setContentView(R.layout.activity_write_status);
 
-		retweeted_status = (Status) getIntent().getSerializableExtra("status");
+		retweeted_status = (Goods) getIntent().getSerializableExtra("status");
 		
 		initView();
 	}
@@ -141,61 +135,62 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 			Uri uri = imgUris.get(0);
 			imgFilePath = ImageUtils.getImageAbsolutePath19(this, uri);
 		}
-		
-		long retweetedStatusId = cardStatus == null ? -1 : cardStatus.getId();
 
-		Map<String, String> request = new HashMap<>();
-		request.put("access_token", accessToken.getToken());
-		request.put("status", statusContent);
-		request.put("pic", imgFilePath);
-		request.put("id", String.valueOf(retweetedStatusId));
-		WeiboHttpRequest.getSingleton()
-				.getApiService()
-				.statusesRepost(request)
-				.compose(RxComposer.<Status>common(this))
-				.subscribe(new SimpleDisObserver<Status>() {
-					@Override
-					public void onNext(Status status) {
-						showTip("微博发送成功");
-						finish();
-					}
-				});
+		// FIXME: 2017/8/15
+//		long retweetedStatusId = cardStatus == null ? -1 : cardStatus.getId();
+//
+//		Map<String, String> request = new HashMap<>();
+//		request.put("access_token", accessToken.getToken());
+//		request.put("status", statusContent);
+//		request.put("pic", imgFilePath);
+//		request.put("id", String.valueOf(retweetedStatusId));
+//		WeiboHttpRequest.getSingleton()
+//				.getApiService()
+//				.statusesRepost(request)
+//				.compose(RxComposer.<Status>commonProgress(this))
+//				.subscribe(new SimpleDisObserver<Status>() {
+//					@Override
+//					public void onNext(Status status) {
+//						showTip("微博发送成功");
+//						finish();
+//					}
+//				});
 	}
 
 	/**
 	 * 初始化引用微博内容
 	 */
 	private void initRetweetedStatus() {
-		if(retweeted_status != null) {
-			Status rrStatus = retweeted_status.getRetweeted_status();
-			if(rrStatus != null) {
-				String content = "//@" + retweeted_status.getUser().getName()
-						+ ":" + retweeted_status.getText();
-				et_write_status.setText(
-						StringUtils.getWeiboContent(this, et_write_status, content));
-				cardStatus = rrStatus;
-			} else {
-				et_write_status.setText("转发微博");
-				cardStatus = retweeted_status;
-			}
-			
-			String imgUrl = cardStatus.getThumbnail_pic();
-			if(TextUtils.isEmpty(imgUrl)) {
-				iv_rstatus_img.setVisibility(View.GONE);
-			} else {
-				iv_rstatus_img.setVisibility(View.VISIBLE);
-				Glide.with(this).load(imgUrl).into(iv_rstatus_img);
-			}
-			
-			tv_rstatus_username.setText("@" + cardStatus.getUser().getName());
-			tv_rstatus_content.setText(cardStatus.getText());
-			
-			iv_image.setVisibility(View.GONE);
-			
-			include_retweeted_status_card.setVisibility(View.VISIBLE);
-		} else {
-			include_retweeted_status_card.setVisibility(View.GONE);
-		}
+//		if(retweeted_status != null) {
+//			Status rrStatus = retweeted_status.getRetweeted_status();
+//			if(rrStatus != null) {
+//				String content = "//@" + retweeted_status.getUser().getName()
+//						+ ":" + retweeted_status.getText();
+//				et_write_status.setText(
+//						StringUtils.getWeiboContent(this, et_write_status, content));
+//				cardStatus = rrStatus;
+//			} else {
+//				et_write_status.setText("转发微博");
+//				cardStatus = retweeted_status;
+//			}
+//
+//			String imgUrl = cardStatus.getThumbnail_pic();
+//			if(TextUtils.isEmpty(imgUrl)) {
+//				iv_rstatus_img.setVisibility(View.GONE);
+//			} else {
+//				iv_rstatus_img.setVisibility(View.VISIBLE);
+//				Glide.with(this).load(imgUrl).into(iv_rstatus_img);
+//			}
+//
+//			tv_rstatus_username.setText("@" + cardStatus.getUser().getName());
+//			tv_rstatus_content.setText(cardStatus.getText());
+//
+//			iv_image.setVisibility(View.GONE);
+//
+//			include_retweeted_status_card.setVisibility(View.VISIBLE);
+//		} else {
+//			include_retweeted_status_card.setVisibility(View.GONE);
+//		}
 	}
 
 	/**

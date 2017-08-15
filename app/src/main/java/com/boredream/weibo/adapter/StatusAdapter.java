@@ -2,7 +2,6 @@ package com.boredream.weibo.adapter;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -19,15 +18,13 @@ import android.widget.Toast;
 
 import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.weibo.R;
-import com.boredream.weibo.activity.WeiboImageBrowserActivity;
 import com.boredream.weibo.activity.StatusDetailActivity;
 import com.boredream.weibo.activity.UserInfoActivity;
+import com.boredream.weibo.activity.WeiboImageBrowserActivity;
 import com.boredream.weibo.activity.WriteCommentActivity;
 import com.boredream.weibo.activity.WriteStatusActivity;
-import com.boredream.weibo.entity.PicUrls;
-import com.boredream.weibo.entity.Status;
+import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
-import com.boredream.weibo.utils.DateUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.bumptech.glide.Glide;
 
@@ -38,9 +35,9 @@ import java.util.List;
 public class StatusAdapter extends BaseAdapter {
 
 	private Context context;
-	private List<Status> datas;
+	private List<Goods> datas;
 
-	public StatusAdapter(Context context, List<Status> datas) {
+	public StatusAdapter(Context context, List<Goods> datas) {
 		this.context = context;
 		this.datas = datas;
 	}
@@ -51,7 +48,7 @@ public class StatusAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Status getItem(int position) {
+	public Goods getItem(int position) {
 		return datas.get(position);
 	}
 
@@ -121,20 +118,21 @@ public class StatusAdapter extends BaseAdapter {
 		}
 
 		// bind data
-		final Status status = getItem(position);
+		final Goods status = getItem(position);
 		final User user = status.getUser();
-		Glide.with(context).load(user.getProfile_image_url()).into(holder.iv_avatar);
-		holder.tv_subhead.setText(user.getName());
-		holder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at())
-				+ " 来自 " + Html.fromHtml(status.getSource()));
+		Glide.with(context).load(user.getAvatarUrl()).into(holder.iv_avatar);
+		holder.tv_subhead.setText(user.getNickname());
+		// FIXME: 2017/8/15
+//		holder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at())
+//				+ " 来自 " + Html.fromHtml(status.getSource()));
 		holder.tv_content.setText(StringUtils.getWeiboContent(
-				context, holder.tv_content, status.getText()));
+				context, holder.tv_content, status.getName()));
 		
 		holder.iv_avatar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(context, UserInfoActivity.class);
-				intent.putExtra("userName", user.getName());
+				intent.putExtra("userName", user.getNickname());
 				context.startActivity(intent);
 			}
 		});
@@ -143,38 +141,36 @@ public class StatusAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				Intent intent = new Intent(context, UserInfoActivity.class);
-				intent.putExtra("userName", user.getName());
+				intent.putExtra("userName", user.getNickname());
 				context.startActivity(intent);
 			}
 		});
 		
 		setImages(status, holder.include_status_image, holder.gv_images, holder.iv_image);
+
+		// FIXME: 2017/8/15
+//		final Status retweeted_status = status.getRetweeted_status();
+//		if(retweeted_status != null) {
+//			User retUser = retweeted_status.getUser();
+//
+//			holder.include_retweeted_status.setVisibility(View.VISIBLE);
+//			String retweetedContent = "@" + retUser.getName() + ":"
+//					+ retweeted_status.getText();
+//			holder.tv_retweeted_content.setText(StringUtils.getWeiboContent(
+//					context, holder.tv_retweeted_content, retweetedContent));
+//
+//			setImages(retweeted_status,
+//					holder.include_retweeted_status_image,
+//					holder.gv_retweeted_images, holder.iv_retweeted_image);
+//		} else {
+//			holder.include_retweeted_status.setVisibility(View.GONE);
+//		}
 		
-		final Status retweeted_status = status.getRetweeted_status();
-		if(retweeted_status != null) {
-			User retUser = retweeted_status.getUser();
-			
-			holder.include_retweeted_status.setVisibility(View.VISIBLE);
-			String retweetedContent = "@" + retUser.getName() + ":" 
-					+ retweeted_status.getText();
-			holder.tv_retweeted_content.setText(StringUtils.getWeiboContent(
-					context, holder.tv_retweeted_content, retweetedContent));
-			
-			setImages(retweeted_status, 
-					holder.include_retweeted_status_image, 
-					holder.gv_retweeted_images, holder.iv_retweeted_image);
-		} else {
-			holder.include_retweeted_status.setVisibility(View.GONE);
-		}
+		holder.tv_share_bottom.setText("转发");
 		
-		holder.tv_share_bottom.setText(status.getReposts_count() == 0 ?
-				"转发" : status.getReposts_count() + "");
+		holder.tv_comment_bottom.setText("评论");
 		
-		holder.tv_comment_bottom.setText(status.getComments_count() == 0 ?
-				"评论" : status.getComments_count() + "");
-		
-		holder.tv_like_bottom.setText(status.getAttitudes_count() == 0 ?
-				"赞" : status.getAttitudes_count() + "");
+		holder.tv_like_bottom.setText("赞");
 		
 		holder.ll_card_content.setOnClickListener(new OnClickListener() {
 			@Override
@@ -185,14 +181,14 @@ public class StatusAdapter extends BaseAdapter {
 			}
 		});
 		
-		holder.include_retweeted_status.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(context, StatusDetailActivity.class);
-				intent.putExtra("status", retweeted_status);
-				context.startActivity(intent);
-			}
-		});
+//		holder.include_retweeted_status.setOnClickListener(new OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				Intent intent = new Intent(context, StatusDetailActivity.class);
+//				intent.putExtra("status", retweeted_status);
+//				context.startActivity(intent);
+//			}
+//		});
 		
 		holder.ll_share_bottom.setOnClickListener(new OnClickListener() {
 			@Override
@@ -206,16 +202,16 @@ public class StatusAdapter extends BaseAdapter {
 		holder.ll_comment_bottom.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if(status.getComments_count() > 0) {
-					Intent intent = new Intent(context, StatusDetailActivity.class);
-					intent.putExtra("status", status);
-					intent.putExtra("scroll2Comment", true);
-					context.startActivity(intent);
-				} else {
+//				if(status.getComments_count() > 0) {
+//					Intent intent = new Intent(context, StatusDetailActivity.class);
+//					intent.putExtra("status", status);
+//					intent.putExtra("scroll2Comment", true);
+//					context.startActivity(intent);
+//				} else {
 					Intent intent = new Intent(context, WriteCommentActivity.class);
 					intent.putExtra("status", status);
 					context.startActivity(intent);
-				}
+//				}
 				ToastUtils.showToast(context, "评个论~", Toast.LENGTH_SHORT);
 			}
 		});
@@ -230,10 +226,10 @@ public class StatusAdapter extends BaseAdapter {
 		return convertView;
 	}
 
-	private void setImages(final Status status, FrameLayout imgContainer,
+	private void setImages(final Goods status, FrameLayout imgContainer,
 			GridView gv_images, ImageView iv_image) {
-		ArrayList<PicUrls> pic_urls = status.getPic_urls();
-		String thumbnail_pic = status.getThumbnail_pic();
+		ArrayList<String> pic_urls = status.getImages();
+		String thumbnail_pic = status.getImage();
 		
 		if(pic_urls != null && pic_urls.size() > 1) {
 			imgContainer.setVisibility(View.VISIBLE);
