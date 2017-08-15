@@ -15,6 +15,7 @@
         <ListView
             android:id="@+id/lv_home"
             style="@style/AbsListViewCommon"
+            android:scrollbars="vertical"
             android:dividerHeight="8dp" >
         </ListView>
 

@@ -1,6 +1,7 @@
 package com.boredream.weibo.entity;
 
 import com.boredream.bdcodehelper.lean.entity.LeanCloudObject;
+import com.boredream.bdcodehelper.utils.CollectionUtils;
 
 import java.util.ArrayList;
 
@@ -44,6 +45,10 @@ public class Goods extends LeanCloudObject {
     }
 
     public ArrayList<String> getImages() {
+        if(CollectionUtils.isEmpty(images)) {
+            images = new ArrayList<>();
+            images.add(getImage());
+        }
         return images;
     }
 

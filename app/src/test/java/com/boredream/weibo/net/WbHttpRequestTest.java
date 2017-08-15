@@ -1,12 +1,9 @@
 package com.boredream.weibo.net;
 
-import com.boredream.bdcodehelper.base.AppKeeper;
 import com.boredream.bdcodehelper.utils.MockUtils;
 import com.boredream.weibo.entity.User;
 
 import org.junit.Test;
-import org.mockito.Mock;
-import org.mockito.internal.util.MockUtil;
 
 import io.reactivex.Observer;
 import io.reactivex.annotations.NonNull;

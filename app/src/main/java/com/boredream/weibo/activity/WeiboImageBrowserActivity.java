@@ -9,9 +9,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.adapter.ImageBrowserAdapter;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.adapter.WeiboImageBrowserAdapter;
 import com.boredream.weibo.entity.Goods;
 
 import java.util.ArrayList;
@@ -24,7 +24,7 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 
 	private Goods status;
 	private int position;
-	private WeiboImageBrowserAdapter adapter;
+	private ImageBrowserAdapter adapter;
 	private ArrayList<String> imgUrls;
 
 	@Override
@@ -56,7 +56,8 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 	}
 	
 	private void setData() {
-		adapter = new WeiboImageBrowserAdapter(this, imgUrls);
+		adapter = new ImageBrowserAdapter(this);
+		adapter.setImageStrs(imgUrls);
 		vp_image_brower.setAdapter(adapter);
 		
 		final int size = imgUrls.size();
