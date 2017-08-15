@@ -13,11 +13,9 @@ import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.response.CommentListResponse;
-import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.WeiboHttpRequest;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
-import com.sina.weibo.sdk.net.WeiboParameters;
-import com.sina.weibo.sdk.utils.Utility;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -99,7 +97,7 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 		}
 		request.put("comment", comment);
 
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
 				.commentsCreate(request)
 				.compose(RxComposer.<CommentListResponse>common(this))

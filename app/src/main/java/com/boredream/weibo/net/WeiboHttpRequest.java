@@ -19,25 +19,25 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class HttpRequest {
+public class WeiboHttpRequest {
 
     private static final String HOST = "https://api.weibo.com/2/";
 
     private Retrofit retrofit;
-    private static volatile HttpRequest singleton = null;
+    private static volatile WeiboHttpRequest singleton = null;
 
-    public static HttpRequest getSingleton() {
+    public static WeiboHttpRequest getSingleton() {
         if (singleton == null) {
-            synchronized (HttpRequest.class) {
+            synchronized (WeiboHttpRequest.class) {
                 if (singleton == null) {
-                    singleton = new HttpRequest();
+                    singleton = new WeiboHttpRequest();
                 }
             }
         }
         return singleton;
     }
 
-    private HttpRequest() {
+    private WeiboHttpRequest() {
         HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 

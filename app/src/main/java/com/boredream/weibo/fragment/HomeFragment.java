@@ -13,7 +13,7 @@ import com.boredream.weibo.adapter.StatusAdapter;
 import com.boredream.weibo.constants.WeiboConstants;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.response.StatusListResponse;
-import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.WeiboHttpRequest;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -87,7 +87,7 @@ public class HomeFragment extends BaseFragment {
 			return;
 		}
 
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
 				.statusesHome_timeline(page)
 				.compose(RxComposer.<StatusListResponse>common(activity))

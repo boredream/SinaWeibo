@@ -32,7 +32,7 @@ import com.boredream.weibo.entity.PicUrls;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.response.CommentListResponse;
-import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.WeiboHttpRequest;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.DateUtils;
 import com.boredream.weibo.utils.StringUtils;
@@ -347,7 +347,7 @@ public class StatusDetailActivity extends BaseActivity implements
 	 *            页数
 	 */
 	private void loadComments(final int page) {
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
 				.commentsShow(status.getId(), page)
 				.compose(RxComposer.<CommentListResponse>common(this))

@@ -27,14 +27,13 @@ import com.boredream.weibo.adapter.EmotionGvAdapter;
 import com.boredream.weibo.adapter.EmotionPagerAdapter;
 import com.boredream.weibo.adapter.WriteStatusGridImgsAdapter;
 import com.boredream.weibo.entity.Status;
-import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.WeiboHttpRequest;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.EmotionUtils;
 import com.boredream.weibo.utils.ImageUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.bumptech.glide.Glide;
-import com.sina.weibo.sdk.web.WeiboPageUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -150,7 +149,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		request.put("status", statusContent);
 		request.put("pic", imgFilePath);
 		request.put("id", String.valueOf(retweetedStatusId));
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
 				.statusesRepost(request)
 				.compose(RxComposer.<Status>common(this))

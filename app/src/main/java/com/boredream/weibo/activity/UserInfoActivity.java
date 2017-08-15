@@ -23,7 +23,7 @@ import com.boredream.weibo.adapter.StatusAdapter;
 import com.boredream.weibo.entity.Status;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.response.StatusListResponse;
-import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.WeiboHttpRequest;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.boredream.weibo.widget.UnderlineIndicatorView;
@@ -264,7 +264,7 @@ public class UserInfoActivity extends BaseActivity implements
 	}
 	
 	private void loadUserInfo() {
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
 				.usersShow(accessToken.getUid())
 				.compose(RxComposer.<User>common(this))
@@ -287,7 +287,7 @@ public class UserInfoActivity extends BaseActivity implements
 			uid = null;
 			uname = userName;
 		}
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
 				.statusesUser_timeline(uid, uname, page)
 				.compose(RxComposer.<StatusListResponse>common(this))

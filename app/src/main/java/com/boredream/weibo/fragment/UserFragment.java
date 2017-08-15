@@ -19,7 +19,7 @@ import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.adapter.UserItemAdapter;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.UserItem;
-import com.boredream.weibo.net.HttpRequest;
+import com.boredream.weibo.net.WeiboHttpRequest;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.utils.TitleBuilder;
 import com.bumptech.glide.Glide;
@@ -75,7 +75,7 @@ public class UserFragment extends BaseFragment {
 	}
 
 	private void loadUserInfo() {
-		HttpRequest.getSingleton()
+		WeiboHttpRequest.getSingleton()
 				.getApiService()
                 .usersShow(accessToken.getUid())
 				.compose(RxComposer.<User>common(activity))
