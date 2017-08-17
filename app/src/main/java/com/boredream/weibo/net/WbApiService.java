@@ -120,7 +120,7 @@ public interface WbApiService {
     // 发布一条微博
     @POST("1/classes/Goods")
     Observable<Goods> statusesUpload(
-            @Body Map<String, String> request);
+            @Body Map<String, Object> request);
 
     // 微博评论列表
     @GET("comments/show.json")
@@ -131,11 +131,11 @@ public interface WbApiService {
     // 对一条微博进行评论
     @POST("comments/create.json")
     Observable<Comment> commentsCreate(
-            @Body Map<String, String> request);
+            @Body Map<String, Object> request);
 
     // 转发一条微博
     @POST("statuses/repost.json")
     Observable<Goods> statusesRepost(
-            @Body Map<String, String> request);
+            @Body Map<String, Object> request);
 
 }

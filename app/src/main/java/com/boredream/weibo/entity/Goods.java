@@ -44,6 +44,9 @@ public class Goods extends LeanCloudObject {
 
     public ArrayList<String> getImages() {
         ArrayList<String> images = new ArrayList<>();
+        if(StringUtils.isEmpty(image)) {
+            return images;
+        }
         for (String s : image.split("\\|")) {
             if(StringUtils.isEmpty(s)) {
                 continue;

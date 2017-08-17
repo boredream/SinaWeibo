@@ -56,8 +56,7 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 	}
 	
 	private void setData() {
-		adapter = new ImageBrowserAdapter(this);
-		adapter.setImageStrs(imgUrls);
+		adapter = new ImageBrowserAdapter(this, imgUrls);
 		vp_image_brower.setAdapter(adapter);
 		
 		final int size = imgUrls.size();
@@ -69,6 +68,25 @@ public class WeiboImageBrowserActivity extends BaseActivity implements OnClickLi
 		} else {
 			tv_image_index.setVisibility(View.GONE);
 		}
+
+		vp_image_brower.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+			@Override
+			public void onPageSelected(int arg0) {
+				int index = arg0 % imgUrls.size();
+				tv_image_index.setText((index + 1) + "/" + imgUrls.size());
+			}
+
+			@Override
+			public void onPageScrolled(int arg0, float arg1, int arg2) {
+
+			}
+
+			@Override
+			public void onPageScrollStateChanged(int arg0) {
+
+			}
+		});
 
 		vp_image_brower.setCurrentItem(initPosition);
 	}

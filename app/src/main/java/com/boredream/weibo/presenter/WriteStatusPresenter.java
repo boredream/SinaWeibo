@@ -6,6 +6,7 @@ import com.boredream.bdcodehelper.lean.entity.FileUploadResponse;
 import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.utils.CollectionUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
+import com.boredream.weibo.constants.UserInfoKeeper;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.net.WbHttpRequest;
@@ -36,8 +37,9 @@ public class WriteStatusPresenter implements WriteStatusContract.Presenter {
 
     @Override
     public void publishStatus(final Context context, final String text, List<String> paths) {
-        final Map<String, String> request = new HashMap<>();
+        final Map<String, Object> request = new HashMap<>();
         request.put("name", text);
+        request.put("user", UserInfoKeeper.getInstance().getCurrentUser().getPointer());
         Observable<Goods> observable = WbHttpRequest.getInstance().getApiService().statusesUpload(request);
 
         if(!CollectionUtils.isEmpty(paths)) {
@@ -59,7 +61,7 @@ public class WriteStatusPresenter implements WriteStatusContract.Presenter {
                             @Override
                             public ObservableSource<FileUploadResponse> apply(@NonNull File file) throws Exception {
                                 RequestBody requestBody = RequestBody.create(MediaType.parse("image/jpeg"), file);
-                                String fileName = "image_" + System.currentTimeMillis() + ".jpg";
+                                String fileName = "image_" + System.currentTimeMillis();
                                 return WbHttpRequest.getInstance().getApiService().fileUpload(fileName, requestBody);
                             }
                         }));

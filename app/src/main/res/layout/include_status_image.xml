@@ -7,6 +7,9 @@
     <com.boredream.bdcodehelper.view.WrapHeightGridView
         android:id="@+id/gv_images"
         style="@style/GridViewImages"
+        android:numColumns="3"
+        android:verticalSpacing="@dimen/margin_tiny"
+        android:horizontalSpacing="@dimen/margin_tiny"
         android:layout_width="272dp" />
 
     <ImageView
