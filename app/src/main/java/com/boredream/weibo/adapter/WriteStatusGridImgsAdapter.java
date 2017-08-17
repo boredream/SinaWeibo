@@ -1,10 +1,7 @@
 package com.boredream.weibo.adapter;
 
-import java.util.ArrayList;
-
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.net.Uri;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -13,15 +10,18 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.boredream.bdcodehelper.net.GlideHelper;
 import com.boredream.weibo.R;
+
+import java.util.ArrayList;
 
 public class WriteStatusGridImgsAdapter extends BaseAdapter {
 
 	private Context context;
-	private ArrayList<Uri> datas;
+	private ArrayList<String> datas;
 	private GridView gv;
 
-	public WriteStatusGridImgsAdapter(Context context, ArrayList<Uri> datas, GridView gv) {
+	public WriteStatusGridImgsAdapter(Context context, ArrayList<String> datas, GridView gv) {
 		this.context = context;
 		this.datas = datas;
 		this.gv = gv;
@@ -33,7 +33,7 @@ public class WriteStatusGridImgsAdapter extends BaseAdapter {
 	}
 
 	@Override
-	public Uri getItem(int position) {
+	public String getItem(int position) {
 		return datas.get(position);
 	}
 
@@ -65,9 +65,9 @@ public class WriteStatusGridImgsAdapter extends BaseAdapter {
 		
 		if(position < getCount() - 1) {
 			// set data
-			Uri item = getItem(position);
-			holder.iv_image.setImageURI(item);
-			
+			String item = getItem(position);
+			GlideHelper.loadImg(holder.iv_image, item);
+
 			holder.iv_delete_image.setVisibility(View.VISIBLE);
 			holder.iv_delete_image.setOnClickListener(new OnClickListener() {
 				@Override

@@ -2,7 +2,6 @@ package com.boredream.weibo.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.text.SpannableString;
@@ -19,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bilibili.boxing.Boxing;
+import com.bilibili.boxing.model.entity.BaseMedia;
+import com.boredream.bdcodehelper.utils.CollectionUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
@@ -58,7 +60,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	private ProgressDialog progressDialog;
 
 	private WriteStatusGridImgsAdapter statusImgsAdapter;
-	private ArrayList<Uri> imgUris = new ArrayList<Uri>();
+	private ArrayList<String> imgPaths = new ArrayList<>();
 	private EmotionPagerAdapter emotionPagerGvAdapter;
 	
 	private Goods retweeted_status;
@@ -106,7 +108,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		progressDialog = new ProgressDialog(this);
 		progressDialog.setMessage("微博发布中...");
 
-		statusImgsAdapter = new WriteStatusGridImgsAdapter(this, imgUris, gv_write_status);
+		statusImgsAdapter = new WriteStatusGridImgsAdapter(this, imgPaths, gv_write_status);
 		gv_write_status.setAdapter(statusImgsAdapter);
 		gv_write_status.setOnItemClickListener(this);
 
@@ -131,9 +133,8 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		}
 		
 		String imgFilePath = null;
-		if(imgUris.size() > 0) {
-			Uri uri = imgUris.get(0);
-			imgFilePath = ImageUtils.getImageAbsolutePath19(this, uri);
+		if(imgPaths.size() > 0) {
+			String path = imgPaths.get(0);
 		}
 
 		// FIXME: 2017/8/15
@@ -253,7 +254,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	 * 更新图片显示
 	 */
 	private void updateImgs() {
-		if(imgUris.size() > 0) {
+		if(imgPaths.size() > 0) {
 			gv_write_status.setVisibility(View.VISIBLE);
 			statusImgsAdapter.notifyDataSetChanged();
 		} else {
@@ -271,7 +272,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 			sendStatus();
 			break;
 		case R.id.iv_image:
-			ImageUtils.showImagePickDialog(this);
+			ImageUtils.pickImages(this, ImageUtils.REQUEST_CODE_PICKER_IMAGES);
 			break;
 		case R.id.iv_at:
 			break;
@@ -296,7 +297,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		Object itemAdapter = parent.getAdapter();
 		if(itemAdapter instanceof WriteStatusGridImgsAdapter) {
 			if(position == statusImgsAdapter.getCount() - 1) {
-				ImageUtils.showImagePickDialog(this);
+				ImageUtils.pickImages(this, ImageUtils.REQUEST_CODE_PICKER_IMAGES);
 			}
 		} else if(itemAdapter instanceof EmotionGvAdapter) {
 			EmotionGvAdapter emotionAdapter = (EmotionGvAdapter) itemAdapter;
@@ -326,26 +327,14 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		switch (requestCode) {
-		case ImageUtils.REQUEST_CODE_FROM_ALBUM:
-			if(resultCode == RESULT_CANCELED) {
-				return;
-			}
-			Uri imageUri = data.getData();
-			
-			imgUris.add(imageUri);
-			updateImgs();
-			break;
-		case ImageUtils.REQUEST_CODE_FROM_CAMERA:
-			if(resultCode == RESULT_CANCELED) {
-				ImageUtils.deleteImageUri(this, ImageUtils.imageUriFromCamera);
-			} else {
-				Uri imageUriCamera = ImageUtils.imageUriFromCamera;
-				
-				imgUris.add(imageUriCamera);
+		case ImageUtils.REQUEST_CODE_PICKER_IMAGES:
+			List<BaseMedia> medias = Boxing.getResult(data);
+			if(CollectionUtils.isEmpty(medias)) return;
+			for (BaseMedia media : medias) {
+				imgPaths.add(media.getPath());
 				updateImgs();
 			}
 			break;
-
 		default:
 			break;
 		}
