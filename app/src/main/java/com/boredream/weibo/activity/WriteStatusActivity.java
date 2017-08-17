@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.entity.BaseMedia;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.utils.CollectionUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.weibo.BaseActivity;
@@ -28,16 +29,25 @@ import com.boredream.weibo.adapter.EmotionGvAdapter;
 import com.boredream.weibo.adapter.EmotionPagerAdapter;
 import com.boredream.weibo.adapter.WriteStatusGridImgsAdapter;
 import com.boredream.weibo.entity.Goods;
+import com.boredream.weibo.net.RxComposer;
+import com.boredream.weibo.net.WbHttpRequest;
+import com.boredream.weibo.presenter.WriteStatusContract;
+import com.boredream.weibo.presenter.WriteStatusPresenter;
 import com.boredream.weibo.utils.EmotionUtils;
 import com.boredream.weibo.utils.ImageUtils;
 import com.boredream.weibo.utils.StringUtils;
 import com.boredream.weibo.utils.TitleBuilder;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-public class WriteStatusActivity extends BaseActivity implements OnClickListener, OnItemClickListener {
+import okhttp3.RequestBody;
 
+public class WriteStatusActivity extends BaseActivity implements OnClickListener, OnItemClickListener, WriteStatusContract.View {
+
+	private WriteStatusPresenter presenter;
 	// 输入框
 	private EditText et_write_status;
 	// 添加的九宫格图片
@@ -78,6 +88,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	}
 
 	private void initView() {
+		presenter = new WriteStatusPresenter(this);
 		// 标题栏
 		new TitleBuilder(this)
 				.setTitleText("发微博")
@@ -132,30 +143,15 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 			return;
 		}
 		
-		String imgFilePath = null;
-		if(imgPaths.size() > 0) {
-			String path = imgPaths.get(0);
-		}
-
-		// FIXME: 2017/8/15
 //		long retweetedStatusId = cardStatus == null ? -1 : cardStatus.getId();
 //
-//		Map<String, String> request = new HashMap<>();
-//		request.put("access_token", accessToken.getToken());
-//		request.put("status", statusContent);
-//		request.put("pic", imgFilePath);
-//		request.put("id", String.valueOf(retweetedStatusId));
-//		WeiboHttpRequest.getSingleton()
-//				.getApiService()
-//				.statusesRepost(request)
-//				.compose(RxComposer.<Status>commonProgress(this))
-//				.subscribe(new SimpleDisObserver<Status>() {
-//					@Override
-//					public void onNext(Status status) {
-//						showTip("微博发送成功");
-//						finish();
-//					}
-//				});
+		presenter.publishStatus(this, statusContent, imgPaths);
+	}
+
+	@Override
+	public void publishStatusSuccess(Goods goods) {
+		showTip("微博发布成功");
+		finish();
 	}
 
 	/**

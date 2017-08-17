@@ -117,6 +117,11 @@ public interface WbApiService {
     Observable<ListResponse<Goods>> statusesHome(
             @Query("page") int page);
 
+    // 发布一条微博
+    @POST("1/classes/Goods")
+    Observable<Goods> statusesUpload(
+            @Body Map<String, String> request);
+
     // 微博评论列表
     @GET("comments/show.json")
     Observable<ArrayList<Comment>> commentsShow(
@@ -133,13 +138,4 @@ public interface WbApiService {
     Observable<Goods> statusesRepost(
             @Body Map<String, String> request);
 
-    // 发布一条微博(带图片)
-    @POST("statuses/upload.json")
-    Observable<Goods> statusesUpload(
-            @Body Map<String, String> request);
-
-    // 发布一条微博(不带图片)
-    @POST("statuses/update.json")
-    Observable<Goods> statusesUpdate(
-            @Body Map<String, String> request);
 }

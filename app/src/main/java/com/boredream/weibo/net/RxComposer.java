@@ -9,7 +9,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.ObservableTransformer;
 import io.reactivex.annotations.NonNull;
-import io.reactivex.functions.Action;
+import io.reactivex.functions.Consumer;
 
 public class RxComposer {
 
@@ -32,9 +32,16 @@ public class RxComposer {
             public ObservableSource<T> apply(@NonNull final Observable<T> upstream) {
                 return upstream.compose(CommonRxComposer.<T>schedulers())
                         .compose(LcRxCompose.<T>defaultFailed(view))
-                        .doOnTerminate(new Action() {
+                        .doOnError(new Consumer<Throwable>() {
                             @Override
-                            public void run() throws Exception {
+                            public void accept(@NonNull Throwable throwable) throws Exception {
+                                if(isLoadMore) refreshLayout.finishLoadmore();
+                                else refreshLayout.finishRefresh();
+                            }
+                        })
+                        .doOnNext(new Consumer<T>() {
+                            @Override
+                            public void accept(@NonNull T t) throws Exception {
                                 if(isLoadMore) refreshLayout.finishLoadmore();
                                 else refreshLayout.finishRefresh();
                             }
