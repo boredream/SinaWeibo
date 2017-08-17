@@ -7,10 +7,10 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.entity.Goods;
-import com.boredream.weibo.utils.TitleBuilder;
 
 public class WriteCommentActivity extends BaseActivity implements OnClickListener {
 	// 评论输入框
@@ -38,23 +38,16 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 	}
 
 	private void initView() {
-		new TitleBuilder(this)
-				.setTitleText("发评论")
-				.setLeftText("取消")
-				.setLeftOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// 取消发送评论,关闭本页面
-						WriteCommentActivity.this.finish();
-					}
-				})
-				.setRightText("发送")
-				.setRightOnClickListener(new OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						sendComment();
-					}
-				});
+		TitleBarView titlebar = (TitleBarView) findViewById(R.id.titlebar);
+		titlebar.setTitleText("发评论");
+		titlebar.setLeftBack(this);
+		titlebar.setRightText("发送");
+		titlebar.setRightOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sendComment();
+			}
+		});
 
 		et_write_status = (EditText) findViewById(R.id.et_write_status);
 		iv_image = (ImageView) findViewById(R.id.iv_image);

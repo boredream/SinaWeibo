@@ -15,14 +15,13 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
-import com.boredream.weibo.BaseApplication;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusAdapter;
 import com.boredream.weibo.constants.UserInfoKeeper;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
-import com.boredream.weibo.utils.TitleBuilder;
 import com.boredream.weibo.widget.UnderlineIndicatorView;
 import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
@@ -33,13 +32,9 @@ import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UserInfoActivity extends BaseActivity implements 
-	OnClickListener, OnCheckedChangeListener {
-	
-	// 标题栏
-	private View title;
-	private ImageView titlebar_iv_left;
-	private TextView titlebar_tv;
+public class UserInfoActivity extends BaseActivity implements OnCheckedChangeListener {
+
+	private TitleBarView titlebar;
 	// headerView - 用户信息
 	private View user_info_head;
 	private ImageView iv_avatar;
@@ -72,7 +67,7 @@ public class UserInfoActivity extends BaseActivity implements
 	private int maxImageHeight = -1;
 
 	private int curScrollY;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,15 +86,16 @@ public class UserInfoActivity extends BaseActivity implements
 	}
 
 	private void initView() {
-		title = new TitleBuilder(this)
-			.setTitleBgRes(R.drawable.userinfo_navigationbar_background)
-			.setLeftImage(R.drawable.navigationbar_back_sel)
-			.setLeftOnClickListener(this)
-			.build();
-		// 获取标题栏信息,需要时进行修改
-		titlebar_iv_left = (ImageView) title.findViewById(R.id.titlebar_iv_left);
-		titlebar_tv = (TextView) title.findViewById(R.id.titlebar_tv);
-		
+		titlebar = (TitleBarView) findViewById(R.id.titlebar);
+		titlebar.setBackgroundResource(R.drawable.userinfo_navigationbar_background);
+		titlebar.setLeftImage(R.drawable.userinfo_navigationbar_back_sel);
+		titlebar.setLeftOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				finish();
+			}
+		});
+
 		initInfoHead();
 		initTab();
 		initListView();
@@ -209,16 +205,16 @@ public class UserInfoActivity extends BaseActivity implements
 						iv_user_info_head.getWidth(), 
 						user_info_head.getTop() + iv_user_info_head.getHeight());
 				
-				if(user_info_head.getBottom() < title.getBottom()) {
+				if(user_info_head.getBottom() < titlebar.getBottom()) {
 					shadow_user_info_tab.setVisibility(View.VISIBLE);
-					title.setBackgroundResource(R.drawable.navigationbar_background);
-					titlebar_iv_left.setImageResource(R.drawable.navigationbar_back_sel);
-					titlebar_tv.setVisibility(View.VISIBLE);
+					titlebar.setBackgroundResource(R.drawable.navigationbar_background);
+					titlebar.setLeftImage(R.drawable.navigationbar_back_sel);
+					titlebar.getTvTitle().setVisibility(View.VISIBLE);
 				} else {
 					shadow_user_info_tab.setVisibility(View.GONE);
-					title.setBackgroundResource(R.drawable.userinfo_navigationbar_background);
-					titlebar_iv_left.setImageResource(R.drawable.userinfo_navigationbar_back_sel);
-					titlebar_tv.setVisibility(View.GONE);
+					titlebar.setBackgroundResource(R.drawable.userinfo_navigationbar_background);
+					titlebar.setLeftImage(R.drawable.userinfo_navigationbar_back_sel);
+					titlebar.getTvTitle().setVisibility(View.GONE);
 				}
 			}
 		});
@@ -250,7 +246,7 @@ public class UserInfoActivity extends BaseActivity implements
 			return;
 		}
 		tv_name.setText(user.getNickname());
-		titlebar_tv.setText(user.getNickname());
+		titlebar.setTitleText(user.getNickname());
 
 		Glide.with(this).load(user.getAvatarUrl()).into(iv_avatar);
 		tv_follows.setText("关注");
@@ -331,17 +327,6 @@ public class UserInfoActivity extends BaseActivity implements
 	private void removeFootView(View footView) {
 		if(lv_user_info.getFooterViewsCount() > 1) {
 			lv_user_info.removeFooterView(footView);
-		}
-	}
-	
-	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.titlebar_iv_left:
-			finish();
-			break;
-		default:
-			break;
 		}
 	}
 

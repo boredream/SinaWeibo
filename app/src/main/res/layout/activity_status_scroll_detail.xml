@@ -5,14 +5,19 @@
     android:background="@color/bg_gray"
     android:orientation="vertical" >
 
-    <include layout="@layout/include_titlebar" />
+    <com.boredream.bdcodehelper.view.TitleBarView
+        android:id="@+id/titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </com.boredream.bdcodehelper.view.TitleBarView>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" >
 
-        <com.boredream.boreweibo.widget.Pull2RefreshScrollView
+        <ScrollView
             android:id="@+id/psv_status_detail"
             android:layout_width="match_parent"
             android:layout_height="match_parent" >
@@ -52,7 +57,7 @@
                     android:layout_width="match_parent"
                 	android:layout_height="wrap_content" />
             </LinearLayout>
-        </com.boredream.boreweibo.widget.Pull2RefreshScrollView>
+        </ScrollView>
     </RelativeLayout>
 
     <include

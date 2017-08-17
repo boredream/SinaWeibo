@@ -8,13 +8,13 @@ import android.widget.ListView;
 
 import com.boredream.bdcodehelper.lean.net.LcRxCompose;
 import com.boredream.bdcodehelper.net.SimpleDisObserver;
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseFragment;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusAdapter;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.net.WbHttpRequest;
-import com.boredream.weibo.utils.TitleBuilder;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -47,7 +47,8 @@ public class HomeFragment extends BaseFragment {
 	private void initView() {
 		view = View.inflate(activity, R.layout.frag_home, null);
 
-		new TitleBuilder(view).setTitleText("首页");
+		TitleBarView titlebar = (TitleBarView) view.findViewById(R.id.titlebar);
+		titlebar.setTitleText("首页");
 
 		refresh = (SmartRefreshLayout) view.findViewById(R.id.refresh);
 		lv_home = (ListView) view.findViewById(R.id.lv_home);

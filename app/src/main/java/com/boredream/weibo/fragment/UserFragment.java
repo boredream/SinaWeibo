@@ -11,13 +11,13 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseFragment;
 import com.boredream.weibo.R;
 import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.adapter.UserItemAdapter;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.entity.UserItem;
-import com.boredream.weibo.utils.TitleBuilder;
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
@@ -86,9 +86,8 @@ public class UserFragment extends BaseFragment {
 
 	private void initView() {
 		// 标题栏
-		new TitleBuilder(view)
-			.setTitleText("我")
-			.build();
+		TitleBarView titlebar = (TitleBarView) view.findViewById(R.id.titlebar);
+		titlebar.setTitleText("我");
 		// 用户信息
 		ll_userinfo = (LinearLayout) view.findViewById(R.id.ll_userinfo);
 		ll_userinfo.setOnClickListener(new OnClickListener() {

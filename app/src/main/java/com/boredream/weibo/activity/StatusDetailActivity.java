@@ -21,6 +21,7 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.StatusCommentAdapter;
@@ -29,7 +30,6 @@ import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.utils.StringUtils;
-import com.boredream.weibo.utils.TitleBuilder;
 import com.bumptech.glide.Glide;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -127,10 +127,9 @@ public class StatusDetailActivity extends BaseActivity implements
 	}
 
 	private void initTitle() {
-		new TitleBuilder(this)
-			.setTitleText("微博正文")
-			.setLeftImage(R.drawable.navigationbar_back_sel)
-			.setLeftOnClickListener(this);
+		TitleBarView titlebar = (TitleBarView) findViewById(R.id.titlebar);
+		titlebar.setTitleText("微博正文");
+		titlebar.setLeftBack(this);
 	}
 
 	private void initDetailHead() {
@@ -406,9 +405,6 @@ public class StatusDetailActivity extends BaseActivity implements
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.titlebar_iv_left:
-			StatusDetailActivity.this.finish();
-			break;
 		case R.id.iv_image:
 			break;
 		case R.id.ll_share_bottom:

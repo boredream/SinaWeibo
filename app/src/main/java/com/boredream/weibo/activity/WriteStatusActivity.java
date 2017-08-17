@@ -20,30 +20,23 @@ import android.widget.TextView;
 
 import com.bilibili.boxing.Boxing;
 import com.bilibili.boxing.model.entity.BaseMedia;
-import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.utils.CollectionUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
+import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.adapter.EmotionGvAdapter;
 import com.boredream.weibo.adapter.EmotionPagerAdapter;
 import com.boredream.weibo.adapter.WriteStatusGridImgsAdapter;
 import com.boredream.weibo.entity.Goods;
-import com.boredream.weibo.net.RxComposer;
-import com.boredream.weibo.net.WbHttpRequest;
 import com.boredream.weibo.presenter.WriteStatusContract;
 import com.boredream.weibo.presenter.WriteStatusPresenter;
 import com.boredream.weibo.utils.EmotionUtils;
 import com.boredream.weibo.utils.ImageUtils;
 import com.boredream.weibo.utils.StringUtils;
-import com.boredream.weibo.utils.TitleBuilder;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import okhttp3.RequestBody;
 
 public class WriteStatusActivity extends BaseActivity implements OnClickListener, OnItemClickListener, WriteStatusContract.View {
 
@@ -90,13 +83,16 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	private void initView() {
 		presenter = new WriteStatusPresenter(this);
 		// 标题栏
-		new TitleBuilder(this)
-				.setTitleText("发微博")
-				.setLeftText("取消")
-				.setLeftOnClickListener(this)
-				.setRightText("发送")
-				.setRightOnClickListener(this)
-				.build();
+		TitleBarView titlebar = (TitleBarView) findViewById(R.id.titlebar);
+		titlebar.setTitleText("发微博");
+		titlebar.setLeftBack(this);
+		titlebar.setRightText("发送");
+		titlebar.setRightOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				sendStatus();
+			}
+		});
 		// 输入框
 		et_write_status = (EditText) findViewById(R.id.et_write_status);
 		// 添加的九宫格图片
@@ -261,12 +257,6 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.titlebar_tv_left:
-			finish();
-			break;
-		case R.id.titlebar_tv_right:
-			sendStatus();
-			break;
 		case R.id.iv_image:
 			ImageUtils.pickImages(this, ImageUtils.REQUEST_CODE_PICKER_IMAGES);
 			break;
