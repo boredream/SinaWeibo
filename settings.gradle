@@ -1,1 +1,1 @@
-include ':app', ':bdcodehelper'
+include ':app', ':bdcodehelper', ':emotion'

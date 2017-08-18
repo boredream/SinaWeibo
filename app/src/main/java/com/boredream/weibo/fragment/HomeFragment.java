@@ -95,12 +95,5 @@ public class HomeFragment extends BaseFragment {
 			}
 		}
 		adapter.notifyDataSetChanged();
-
-		// FIXME: 2017/8/15
-//		if(curPage < resBean.getTotal_number()) {
-//			addFootView(footView);
-//		} else {
-//			removeFootView(footView);
-//		}
 	}
 }

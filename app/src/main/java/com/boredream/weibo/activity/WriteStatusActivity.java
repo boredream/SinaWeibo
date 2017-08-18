@@ -4,12 +4,9 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -23,17 +20,14 @@ import com.bilibili.boxing.model.entity.BaseMedia;
 import com.boredream.bdcodehelper.utils.CollectionUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.view.TitleBarView;
+import com.boredream.emotion.EmotionUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.adapter.EmotionGvAdapter;
-import com.boredream.weibo.adapter.EmotionPagerAdapter;
 import com.boredream.weibo.adapter.WriteStatusGridImgsAdapter;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.presenter.WriteStatusContract;
 import com.boredream.weibo.presenter.WriteStatusPresenter;
-import com.boredream.weibo.utils.EmotionUtils;
 import com.boredream.weibo.utils.ImageUtils;
-import com.boredream.weibo.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,8 +58,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 
 	private WriteStatusGridImgsAdapter statusImgsAdapter;
 	private ArrayList<String> imgPaths = new ArrayList<>();
-	private EmotionPagerAdapter emotionPagerGvAdapter;
-	
+
 	private Goods retweeted_status;
 	private Goods cardStatus;
 
@@ -126,7 +119,8 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		iv_add.setOnClickListener(this);
 
 		initRetweetedStatus();
-		initEmotion();
+		EmotionUtils.initEmotion(vp_emotion_dashboard, et_write_status, 140, 7, 3,
+				DisplayUtils.getScreenWidthPixels(this), DisplayUtils.dp2px(this, 8));
 	}
 	
 	/**
@@ -187,62 +181,6 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 	}
 
 	/**
-	 *  初始化表情面板内容
-	 */
-	private void initEmotion() {
-		int screenWidth = DisplayUtils.getScreenWidthPixels(this);
-		int spacing = DisplayUtils.dp2px(this, 8);
-		
-		int itemWidth = (screenWidth - spacing * 8) / 7;
-		int gvHeight = itemWidth * 3 + spacing * 4;
-		
-		List<GridView> gvs = new ArrayList<>();
-		List<String> emotionNames = new ArrayList<>();
-		for(String emojiName : EmotionUtils.emojiMap.keySet()) {
-			emotionNames.add(emojiName);
-			
-			if(emotionNames.size() == 20) {
-				GridView gv = createEmotionGridView(emotionNames, screenWidth, spacing, itemWidth, gvHeight);
-				gvs.add(gv);
-				
-				emotionNames = new ArrayList<>();
-			}
-		}
-		
-		if(emotionNames.size() > 0) {
-			GridView gv = createEmotionGridView(emotionNames, screenWidth, spacing, itemWidth, gvHeight);
-			gvs.add(gv);
-		}
-		
-		emotionPagerGvAdapter = new EmotionPagerAdapter(gvs);
-		LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(screenWidth, gvHeight);
-		vp_emotion_dashboard.setLayoutParams(params);
-		vp_emotion_dashboard.setAdapter(emotionPagerGvAdapter);
-	}
-
-	/**
-	 * 创建显示表情的GridView
-	 */
-	private GridView createEmotionGridView(List<String> emotionNames, int gvWidth, int padding, int itemWidth, int gvHeight) {
-		GridView gv = new GridView(this);
-		gv.setBackgroundResource(R.color.bg_gray);
-		gv.setSelector(R.color.transparent);
-		gv.setNumColumns(7);
-		gv.setPadding(padding, padding, padding, padding);
-		gv.setHorizontalSpacing(padding);
-		gv.setVerticalSpacing(padding);
-		
-		LayoutParams params = new LayoutParams(gvWidth, gvHeight);
-		gv.setLayoutParams(params);
-		
-		EmotionGvAdapter adapter = new EmotionGvAdapter(this, emotionNames, itemWidth);
-		gv.setAdapter(adapter);
-		gv.setOnItemClickListener(this);
-		
-		return gv;
-	}
-
-	/**
 	 * 更新图片显示
 	 */
 	private void updateImgs() {
@@ -280,31 +218,8 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		Object itemAdapter = parent.getAdapter();
-		if(itemAdapter instanceof WriteStatusGridImgsAdapter) {
-			if(position == statusImgsAdapter.getCount() - 1) {
-				ImageUtils.pickImages(this, ImageUtils.REQUEST_CODE_PICKER_IMAGES);
-			}
-		} else if(itemAdapter instanceof EmotionGvAdapter) {
-			EmotionGvAdapter emotionAdapter = (EmotionGvAdapter) itemAdapter;
-			
-			if(position == emotionAdapter.getCount() - 1) {
-				et_write_status.dispatchKeyEvent(
-						new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL));
-			} else {
-				String emotionName = emotionAdapter.getItem(position);
-				
-				int curPosition = et_write_status.getSelectionStart();
-				StringBuilder sb = new StringBuilder(et_write_status.getText().toString());
-				sb.insert(curPosition, emotionName);
-				
-				SpannableString weiboContent = StringUtils.getWeiboContent(
-						this, et_write_status, sb.toString());
-				et_write_status.setText(weiboContent);
-				
-				et_write_status.setSelection(curPosition + emotionName.length());
-			}
-			
+		if(position == statusImgsAdapter.getCount() - 1) {
+			ImageUtils.pickImages(this, ImageUtils.REQUEST_CODE_PICKER_IMAGES);
 		}
 	}
 

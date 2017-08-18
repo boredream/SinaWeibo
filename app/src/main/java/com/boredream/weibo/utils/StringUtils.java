@@ -2,19 +2,17 @@ package com.boredream.weibo.utils;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.text.style.ImageSpan;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.boredream.bdcodehelper.utils.ToastUtils;
+import com.boredream.emotion.EmotionUtils;
 import com.boredream.weibo.R;
 import com.boredream.weibo.activity.UserInfoActivity;
 
@@ -23,12 +21,11 @@ import java.util.regex.Pattern;
 
 public class StringUtils {
 
-	public static SpannableString getWeiboContent(final Context context, final TextView tv, String source) {
+	public static SpannableString getWeiboContent(final Context context, final TextView tv, CharSequence source) {
 		String regexAt = "@[\u4e00-\u9fa5\\w]+";
 		String regexTopic = "#[\u4e00-\u9fa5\\w]+#";
-		String regexEmoji = "\\[[\u4e00-\u9fa5\\w]+\\]";
-		
-		String regex = "(" + regexAt + ")|(" + regexTopic + ")|(" + regexEmoji + ")";
+
+		String regex = "(" + regexAt + ")|(" + regexTopic + ")";
 		
 		SpannableString spannableString = new SpannableString(source);
 		
@@ -43,8 +40,7 @@ public class StringUtils {
 		while(matcher.find()) {
 			final String atStr = matcher.group(1);
 			final String topicStr = matcher.group(2);
-			String emojiStr = matcher.group(3);
-			
+
 			if(atStr != null) {
 				int start = matcher.start(1);
 				
@@ -74,23 +70,10 @@ public class StringUtils {
 				spannableString.setSpan(clickableSpan, start, start + topicStr.length(), 
 						Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
 			}
-			
-			if(emojiStr != null) {
-				int start = matcher.start(3);
-				
-				int imgRes = EmotionUtils.getImgByName(emojiStr);
-				Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), imgRes);
-				
-				if(bitmap != null) {
-					int size = (int) tv.getTextSize();
-					bitmap = Bitmap.createScaledBitmap(bitmap, size, size, true);
-					
-					ImageSpan imageSpan = new ImageSpan(context, bitmap);
-					spannableString.setSpan(imageSpan, start, start + emojiStr.length(), 
-							Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-				}
-			}
 		}
+
+		spannableString = EmotionUtils.getEmotionContent(context, (int) tv.getTextSize(), spannableString);
+
 		return spannableString;
 	}
 
