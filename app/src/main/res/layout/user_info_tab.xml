@@ -34,11 +34,11 @@
             android:text="管理" />
     </RadioGroup>
 
-    <com.boredream.boreweibo.widget.UnderlineIndicatorView
+    <com.boredream.weibo.widget.UnderlineIndicatorView
         android:id="@+id/uliv_user_info"
         android:layout_width="match_parent"
         android:layout_height="4dp" >
-    </com.boredream.boreweibo.widget.UnderlineIndicatorView>
+    </com.boredream.weibo.widget.UnderlineIndicatorView>
 
     <View
         android:layout_width="match_parent"

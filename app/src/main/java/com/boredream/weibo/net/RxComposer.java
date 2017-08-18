@@ -18,8 +18,9 @@ public class RxComposer {
             @Override
             public ObservableSource<T> apply(@NonNull final Observable<T> upstream) {
                 return upstream.compose(CommonRxComposer.<T>schedulers())
-                        .compose(CommonRxComposer.<T>doProgress(view))
-                        .compose(LcRxCompose.<T>defaultFailed(view));
+                        .compose(CommonRxComposer.<T>lifecycler(view))
+                        .compose(LcRxCompose.<T>defaultFailed(view))
+                        .compose(CommonRxComposer.<T>handleProgress(view));
             }
         };
     }
@@ -31,6 +32,7 @@ public class RxComposer {
             @Override
             public ObservableSource<T> apply(@NonNull final Observable<T> upstream) {
                 return upstream.compose(CommonRxComposer.<T>schedulers())
+                        .compose(CommonRxComposer.<T>lifecycler(view))
                         .compose(LcRxCompose.<T>defaultFailed(view))
                         .doOnError(new Consumer<Throwable>() {
                             @Override

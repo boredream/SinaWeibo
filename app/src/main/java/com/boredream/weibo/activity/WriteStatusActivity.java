@@ -196,8 +196,8 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 		int itemWidth = (screenWidth - spacing * 8) / 7;
 		int gvHeight = itemWidth * 3 + spacing * 4;
 		
-		List<GridView> gvs = new ArrayList<GridView>();
-		List<String> emotionNames = new ArrayList<String>();
+		List<GridView> gvs = new ArrayList<>();
+		List<String> emotionNames = new ArrayList<>();
 		for(String emojiName : EmotionUtils.emojiMap.keySet()) {
 			emotionNames.add(emojiName);
 			
@@ -205,7 +205,7 @@ public class WriteStatusActivity extends BaseActivity implements OnClickListener
 				GridView gv = createEmotionGridView(emotionNames, screenWidth, spacing, itemWidth, gvHeight);
 				gvs.add(gv);
 				
-				emotionNames = new ArrayList<String>();
+				emotionNames = new ArrayList<>();
 			}
 		}
 		
