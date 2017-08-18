@@ -1,16 +1,14 @@
-package com.boredream.weibo.adapter;
-
-import java.util.List;
+package com.boredream.emotion;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.boredream.weibo.R;
-import com.boredream.weibo.utils.EmotionUtils;
+import java.util.List;
 
 public class EmotionGvAdapter extends BaseAdapter {
 
@@ -43,10 +41,9 @@ public class EmotionGvAdapter extends BaseAdapter {
 	public View getView(int position, View convertView, ViewGroup parent) {
 		ImageView iv = new ImageView(context);
 		LayoutParams params = new LayoutParams(itemWidth, itemWidth);
-		iv.setPadding(itemWidth/8, itemWidth/8, itemWidth/8, itemWidth/8);
+		iv.setPadding(itemWidth/6, itemWidth/6, itemWidth/6, itemWidth/6);
 		iv.setLayoutParams(params);
-		iv.setBackgroundResource(R.drawable.bg_tran2lgray_sel);
-		
+
 		if(position == getCount() - 1) {
 			iv.setImageResource(R.drawable.emotion_delete_icon);
 		} else {
