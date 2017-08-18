@@ -1,5 +1,6 @@
 package com.boredream.weibo.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
@@ -7,10 +8,20 @@ import android.view.View.OnClickListener;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.boredream.bdcodehelper.lean.LcUtils;
+import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
+import com.boredream.weibo.constants.UserInfoKeeper;
+import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.Goods;
+import com.boredream.weibo.entity.User;
+import com.boredream.weibo.net.RxComposer;
+import com.boredream.weibo.net.WbHttpRequest;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class WriteCommentActivity extends BaseActivity implements OnClickListener {
 	// 评论输入框
@@ -70,23 +81,28 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 			return;
 		}
 
-//		WbHttpRequest.getInstance()
-//				.getApiService()
-//				.commentsCreate(request)
-//				.compose(RxComposer.<CommentListResponse>commonProgress(this))
-//				.subscribe(new SimpleDisObserver<CommentListResponse>() {
-//					@Override
-//					public void onNext(CommentListResponse commentListResponse) {
-//						showTip("微博发送成功");
-//
-//						// 微博发送成功后,设置Result结果数据,然后关闭本页面
-//						Intent data = new Intent();
-//						data.putExtra("sendCommentSuccess", true);
-//						setResult(RESULT_OK, data);
-//
-//						finish();
-//					}
-//				});
+		final Map<String, Object> request = new HashMap<>();
+		request.put("text", comment);
+		User currentUser = UserInfoKeeper.getInstance().getCurrentUser();
+		request.put("user", LcUtils.getPointer(currentUser));
+
+		WbHttpRequest.getInstance()
+				.getApiService()
+				.commentsPublish(request)
+				.compose(RxComposer.<Comment>commonProgress(this))
+				.subscribe(new SimpleDisObserver<Comment>() {
+					@Override
+					public void onNext(Comment response) {
+						showTip("微博发送成功");
+
+						// 微博发送成功后,设置Result结果数据,然后关闭本页面
+						Intent data = new Intent();
+						data.putExtra("sendCommentSuccess", true);
+						setResult(RESULT_OK, data);
+
+						finish();
+					}
+				});
 	}
 
 	@Override

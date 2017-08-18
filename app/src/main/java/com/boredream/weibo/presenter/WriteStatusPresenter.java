@@ -43,7 +43,7 @@ public class WriteStatusPresenter implements WriteStatusContract.Presenter {
         request.put("name", text);
         User currentUser = UserInfoKeeper.getInstance().getCurrentUser();
         request.put("user", LcUtils.getPointer(currentUser));
-        Observable<Goods> observable = WbHttpRequest.getInstance().getApiService().statusesUpload(request);
+        Observable<Goods> observable = WbHttpRequest.getInstance().getApiService().statusesPublish(request);
 
         if(!CollectionUtils.isEmpty(paths)) {
             final int maxSize = DisplayUtils.dp2px(context, 300);
@@ -87,7 +87,7 @@ public class WriteStatusPresenter implements WriteStatusContract.Presenter {
                         @Override
                         public ObservableSource<Goods> apply(@NonNull String images) throws Exception {
                             request.put("image", images);
-                            return WbHttpRequest.getInstance().getApiService().statusesUpload(request);
+                            return WbHttpRequest.getInstance().getApiService().statusesPublish(request);
                         }
                     });
         }

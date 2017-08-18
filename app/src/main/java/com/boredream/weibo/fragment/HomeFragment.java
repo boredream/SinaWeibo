@@ -21,7 +21,9 @@ import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.annotations.NonNull;
 
@@ -69,9 +71,13 @@ public class HomeFragment extends BaseFragment {
 	}
 
 	public void loadData(final int page) {
+		Map<String, Object> request = new HashMap<>();
+		request.put("page", page);
+		request.put("include", "user");
+
 		WbHttpRequest.getInstance()
 				.getApiService()
-				.statusesHome(page)
+				.statusesHome(request)
 				.compose(LcRxCompose.<Goods>handleListResponse())
 				.compose(RxComposer.<ArrayList<Goods>>commonRefresh(activity, page>1, refresh))
 				.subscribe(new SimpleDisObserver<ArrayList<Goods>>() {

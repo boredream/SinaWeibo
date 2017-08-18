@@ -22,6 +22,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
+import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
@@ -107,7 +108,7 @@ public interface WbApiService {
     
     // 获取某个用户最新发表的微博列表
     @GET("1/classes/Goods")
-    Observable<ArrayList<Goods>> statusesUser_timeline(
+    Observable<ArrayList<Goods>> statusesUser(
             @Query("uid") String uid,
             @Query("screen_name") String uname,
             @Query("page") int page);
@@ -115,27 +116,22 @@ public interface WbApiService {
     // 首页微博列表
     @GET("1/classes/Goods")
     Observable<ListResponse<Goods>> statusesHome(
-            @Query("page") int page);
+            @QueryMap Map<String, Object> request);
 
     // 发布一条微博
     @POST("1/classes/Goods")
-    Observable<Goods> statusesUpload(
+    Observable<Goods> statusesPublish(
             @Body Map<String, Object> request);
 
     // 微博评论列表
-    @GET("comments/show.json")
+    @GET("1/classes/Comment")
     Observable<ArrayList<Comment>> commentsShow(
             @Query("id") long statusId,
             @Query("page") int page);
 
     // 对一条微博进行评论
-    @POST("comments/create.json")
-    Observable<Comment> commentsCreate(
-            @Body Map<String, Object> request);
-
-    // 转发一条微博
-    @POST("statuses/repost.json")
-    Observable<Goods> statusesRepost(
+    @POST("1/classes/Comment")
+    Observable<Comment> commentsPublish(
             @Body Map<String, Object> request);
 
 }
