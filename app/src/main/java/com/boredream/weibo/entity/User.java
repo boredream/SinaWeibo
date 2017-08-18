@@ -1,6 +1,6 @@
 package com.boredream.weibo.entity;
 
-import com.boredream.bdcodehelper.lean.entity.LeanCloudObject;
+import com.boredream.bdcodehelper.lean.entity.Pointer;
 
 /**
  * <pre>
@@ -9,7 +9,11 @@ import com.boredream.bdcodehelper.lean.entity.LeanCloudObject;
  *     desc   :
  * </pre>
  */
-public class User extends LeanCloudObject {
+public class User extends Pointer {
+
+    public User() {
+        super();
+    }
 
     private String username;
     private String nickname;

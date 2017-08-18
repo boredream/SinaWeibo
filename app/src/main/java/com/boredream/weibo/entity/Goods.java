@@ -1,6 +1,6 @@
 package com.boredream.weibo.entity;
 
-import com.boredream.bdcodehelper.lean.entity.LeanCloudObject;
+import com.boredream.bdcodehelper.lean.entity.Pointer;
 import com.boredream.bdcodehelper.utils.StringUtils;
 
 import java.util.ArrayList;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
  *     desc   :
  * </pre>
  */
-public class Goods extends LeanCloudObject {
+public class Goods extends Pointer {
 
     private User user;
     private String image;
@@ -20,13 +20,6 @@ public class Goods extends LeanCloudObject {
     private String link;
 
     public User getUser() {
-        if(user == null) {
-            // FIXME: 2017/8/15 
-            user = new User();
-            user.setUsername("110");
-            user.setNickname("官方");
-            user.setAvatarUrl("http://img4.duitang.com/uploads/item/201408/19/20140819172216_zPzZT.jpeg");
-        }
         return user;
     }
 

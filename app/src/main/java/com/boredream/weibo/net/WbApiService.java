@@ -2,8 +2,8 @@ package com.boredream.weibo.net;
 
 import com.boredream.bdcodehelper.lean.entity.AppUpdateInfo;
 import com.boredream.bdcodehelper.lean.entity.FileUploadResponse;
-import com.boredream.bdcodehelper.lean.entity.LeanCloudObject;
 import com.boredream.bdcodehelper.lean.entity.ListResponse;
+import com.boredream.bdcodehelper.lean.entity.Pointer;
 import com.boredream.bdcodehelper.lean.entity.UpdatePswRequest;
 import com.boredream.bdcodehelper.lean.entity.UserRegisterByMobilePhone;
 import com.boredream.weibo.entity.Comment;
@@ -25,7 +25,7 @@ import retrofit2.http.Query;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 
-// FIXME: 2017/8/15 常见api service怎么处理更好
+// TODO: 2017/8/15 常见api service怎么处理更好
 public interface WbApiService {
     // 登录用户
     @GET("/1.1/login")
@@ -83,7 +83,7 @@ public interface WbApiService {
 
     // 修改用户详情(注意, 提交什么参数修改什么参数)
     @PUT("/1/users/{objectId}")
-    Observable<LeanCloudObject> updateUserById(
+    Observable<Pointer> updateUserById(
             @Path("objectId") String userId,
             @Body Map<String, Object> updateInfo);
 

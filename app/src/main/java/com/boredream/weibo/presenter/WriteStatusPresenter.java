@@ -2,12 +2,14 @@ package com.boredream.weibo.presenter;
 
 import android.content.Context;
 
+import com.boredream.bdcodehelper.lean.LcUtils;
 import com.boredream.bdcodehelper.lean.entity.FileUploadResponse;
 import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.utils.CollectionUtils;
 import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.weibo.constants.UserInfoKeeper;
 import com.boredream.weibo.entity.Goods;
+import com.boredream.weibo.entity.User;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.net.WbHttpRequest;
 import com.bumptech.glide.Glide;
@@ -39,7 +41,8 @@ public class WriteStatusPresenter implements WriteStatusContract.Presenter {
     public void publishStatus(final Context context, final String text, List<String> paths) {
         final Map<String, Object> request = new HashMap<>();
         request.put("name", text);
-        request.put("user", UserInfoKeeper.getInstance().getCurrentUser().getPointer());
+        User currentUser = UserInfoKeeper.getInstance().getCurrentUser();
+        request.put("user", LcUtils.getPointer(currentUser));
         Observable<Goods> observable = WbHttpRequest.getInstance().getApiService().statusesUpload(request);
 
         if(!CollectionUtils.isEmpty(paths)) {
