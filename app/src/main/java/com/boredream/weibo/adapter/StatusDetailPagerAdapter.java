@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.fragment.StatusCommentListFragment;
+import com.boredream.weibo.fragment.StatusLikeListFragment;
+import com.boredream.weibo.fragment.StatusTransmitListFragment;
 
 public class StatusDetailPagerAdapter extends FragmentPagerAdapter {
 
@@ -31,11 +33,11 @@ public class StatusDetailPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if(position == 0) {
-            return StatusCommentListFragment.newInstance(status);
+            return StatusTransmitListFragment.newInstance(status);
         } else if(position == 1) {
             return StatusCommentListFragment.newInstance(status);
         } else {
-            return StatusCommentListFragment.newInstance(status);
+            return StatusLikeListFragment.newInstance(status);
         }
     }
 }

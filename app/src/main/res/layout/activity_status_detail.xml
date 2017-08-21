@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg_gray"
     android:orientation="vertical">
 
@@ -13,14 +13,24 @@
 
     </com.boredream.bdcodehelper.view.TitleBarView>
 
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refresh"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_weight="1"
+        android:layout_height="0dp" >
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/app_bar"
             app:elevation="0dp"
             android:background="@color/bg_gray"
+            app:layout_behavior="com.boredream.bdcodehelper.view.FlingBehavior"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
@@ -44,6 +54,11 @@
 
             </android.support.design.widget.TabLayout>
 
+            <View
+                android:background="@color/divider_gray"
+                android:layout_width="match_parent"
+                android:layout_height="1px" />
+
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v4.view.ViewPager
@@ -55,19 +70,6 @@
         </android.support.v4.view.ViewPager>
 
     </android.support.design.widget.CoordinatorLayout>
-
-    <com.scwang.smartrefresh.layout.SmartRefreshLayout
-        android:id="@+id/refresh"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" >
-
-    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
-
-    <include
-        android:id="@+id/status_detail_tab"
-        layout="@layout/status_detail_tab"
-        android:visibility="gone" />
 
     <include
         android:id="@+id/status_detail_controlbar"
