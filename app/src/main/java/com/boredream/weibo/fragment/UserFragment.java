@@ -93,7 +93,7 @@ public class UserFragment extends BaseFragment {
 		ll_userinfo.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(activity, UserInfoActivity.class);
+				Intent intent = new Intent(getActivity(), UserInfoActivity.class);
 				startActivity(intent);
 			}
 		});
@@ -107,7 +107,7 @@ public class UserFragment extends BaseFragment {
 		// 设置栏列表
 		lv_user_items = (ListView) view.findViewById(R.id.lv_user_items);
 		userItems = new ArrayList<>();
-		adapter = new UserItemAdapter(activity, userItems);
+		adapter = new UserItemAdapter(getActivity(), userItems);
 		lv_user_items.setAdapter(adapter);
 	}
 

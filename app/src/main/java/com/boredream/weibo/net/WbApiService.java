@@ -108,7 +108,7 @@ public interface WbApiService {
     
     // 获取某个用户最新发表的微博列表
     @GET("1/classes/Goods")
-    Observable<ArrayList<Goods>> statusesUser(
+    Observable<ListResponse<Goods>> statusesUser(
             @Query("uid") String uid,
             @Query("screen_name") String uname,
             @Query("page") int page);
@@ -125,8 +125,7 @@ public interface WbApiService {
 
     // 微博评论列表
     @GET("1/classes/Comment")
-    Observable<ArrayList<Comment>> commentsShow(
-            @Query("id") long statusId,
+    Observable<ListResponse<Comment>> commentsShow(
             @Query("page") int page);
 
     // 对一条微博进行评论

@@ -167,17 +167,13 @@ public class StatusAdapter extends BaseAdapter {
 //		}
 		
 		holder.tv_share_bottom.setText("转发");
-		
 		holder.tv_comment_bottom.setText("评论");
-		
-		holder.tv_like_bottom.setText("赞");
+		holder.tv_like_bottom.setText(StringUtils.getStringWithCount("赞", status.getWorth()));
 		
 		holder.ll_card_content.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent(context, StatusDetailActivity.class);
-				intent.putExtra("status", status);
-				context.startActivity(intent);
+				StatusDetailActivity.start(context, status);
 			}
 		});
 		
@@ -212,7 +208,6 @@ public class StatusAdapter extends BaseAdapter {
 					intent.putExtra("status", status);
 					context.startActivity(intent);
 //				}
-				ToastUtils.showToast(context, "评个论~", Toast.LENGTH_SHORT);
 			}
 		});
 		

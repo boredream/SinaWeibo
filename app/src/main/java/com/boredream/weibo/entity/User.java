@@ -11,10 +11,6 @@ import com.boredream.bdcodehelper.lean.entity.Pointer;
  */
 public class User extends Pointer {
 
-    public User() {
-        super();
-    }
-
     private String username;
     private String nickname;
     private String password;

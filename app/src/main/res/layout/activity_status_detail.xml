@@ -2,8 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/bg_gray"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <com.boredream.bdcodehelper.view.TitleBarView
         android:id="@+id/titlebar"
@@ -12,27 +13,61 @@
 
     </com.boredream.bdcodehelper.view.TitleBarView>
 
-    <RelativeLayout
-        android:id="@+id/rl_body"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_height="wrap_content" >
 
-        <com.scwang.smartrefresh.layout.SmartRefreshLayout
-            android:id="@+id/refresh"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
+            app:elevation="0dp"
+            android:background="@color/bg_gray"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
-            <ListView
-                android:id="@+id/lv_status_detail"
-                style="@style/ListViewLineDivider" >
-            </ListView>
-        </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+            android:layout_height="wrap_content" >
 
-        <include
-            android:id="@+id/status_detail_tab"
-            layout="@layout/status_detail_tab"
-            android:visibility="gone" />
-    </RelativeLayout>
+            <FrameLayout
+                app:layout_scrollFlags="scroll"
+                android:layout_marginBottom="@dimen/margin_small"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <include layout="@layout/include_status_content" />
+
+            </FrameLayout>
+
+            <android.support.design.widget.TabLayout
+                android:id="@+id/tab"
+                app:tabBackground="@color/white"
+                app:tabIndicatorColor="@color/colorPrimary"
+                app:tabTextColor="@color/txt_black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            </android.support.design.widget.TabLayout>
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/vp"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v4.view.ViewPager>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/refresh"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+    <include
+        android:id="@+id/status_detail_tab"
+        layout="@layout/status_detail_tab"
+        android:visibility="gone" />
 
     <include
         android:id="@+id/status_detail_controlbar"

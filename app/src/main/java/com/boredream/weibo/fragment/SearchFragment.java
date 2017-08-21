@@ -15,7 +15,7 @@ public class SearchFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		view = View.inflate(activity, R.layout.frag_search, null);
+		view = View.inflate(getActivity(), R.layout.frag_search, null);
 		return view;
 	}
 	

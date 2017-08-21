@@ -16,10 +16,16 @@ import com.boredream.emotion.EmotionUtils;
 import com.boredream.weibo.R;
 import com.boredream.weibo.activity.UserInfoActivity;
 
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtils {
+
+	public static String getStringWithCount(String str, int count) {
+		if(count == 0) return str;
+		return str + String.format(Locale.getDefault(), "(%d)", count);
+	}
 
 	public static SpannableString getWeiboContent(final Context context, final TextView tv, CharSequence source) {
 		String regexAt = "@[\u4e00-\u9fa5\\w]+";

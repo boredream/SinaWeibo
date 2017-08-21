@@ -16,7 +16,7 @@ public class MessageFragment extends BaseFragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		view = View.inflate(activity, R.layout.frag_message, null);
+		view = View.inflate(getActivity(), R.layout.frag_message, null);
 
 		TitleBarView titlebar = (TitleBarView) view.findViewById(R.id.titlebar);
 		titlebar.setTitleText("消息");

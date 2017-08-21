@@ -1,32 +1,28 @@
 package com.boredream.weibo.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
+import android.support.v4.view.ViewPager;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.FrameLayout;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.adapter.StatusCommentAdapter;
+import com.boredream.weibo.adapter.StatusDetailPagerAdapter;
 import com.boredream.weibo.adapter.StatusGridImgsAdapter;
-import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.utils.StringUtils;
@@ -37,16 +33,13 @@ import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.ArrayList;
-import java.util.List;
 
-public class StatusDetailActivity extends BaseActivity implements
-		OnClickListener, OnCheckedChangeListener {
+public class StatusDetailActivity extends BaseActivity implements OnClickListener {
 
 	// 跳转到写评论页面code
 	private static final int REQUEST_CODE_WRITE_COMMENT = 2333;
 
-	// listView headerView - 微博信息
-	private View status_detail_info;
+	// header - 微博信息
 	private ImageView iv_avatar;
 	private TextView tv_subhead;
 	private TextView tv_caption;
@@ -59,21 +52,10 @@ public class StatusDetailActivity extends BaseActivity implements
 	private FrameLayout fl_retweeted_imageview;
 	private GridView gv_retweeted_images;
 	private ImageView iv_retweeted_image;
-	// shadow_tab - 顶部悬浮的菜单栏
-	private View shadow_status_detail_tab;
-	private RadioGroup shadow_rg_status_detail;
-	private RadioButton shadow_rb_retweets;
-	private RadioButton shadow_rb_comments;
-	private RadioButton shadow_rb_likes;
-	// listView headerView - 添加至列表中作为header的菜单栏
-	private View status_detail_tab;
-	private RadioGroup rg_status_detail;
-	private RadioButton rb_retweets;
-	private RadioButton rb_comments;
-	private RadioButton rb_likes;
-	// listView - 下拉刷新控件
+	// tab list
+	private TabLayout tab;
+	private ViewPager vp;
 	private SmartRefreshLayout refresh;
-	private ListView lv_status_detail;
 	// bottom_control - 底部互动栏,包括转发/评论/点赞
 	private LinearLayout ll_bottom_control;
 	private LinearLayout ll_share_bottom;
@@ -90,8 +72,11 @@ public class StatusDetailActivity extends BaseActivity implements
 	// 评论当前已加载至的页数
 	private int curPage = 1;
 	
-	private List<Comment> comments = new ArrayList<>();
-	private StatusCommentAdapter adapter;
+	public static void start(Context context, Goods status) {
+		Intent intent = new Intent(context, StatusDetailActivity.class);
+		intent.putExtra("status", status);
+		context.startActivity(intent);
+	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,20 +93,17 @@ public class StatusDetailActivity extends BaseActivity implements
 
 		// 设置数据信息
 		setData();
-		
-		// 开始加载第一页评论数据
-		loadComments(1);
 	}
 
 	private void initView() {
 		// title - 标题栏
 		initTitle();
-		// listView headerView - 微博信息 
+		// headerView - 微博信息
 		initDetailHead();
-		// tab - 菜单栏
+		// tab list
 		initTab();
-		// listView - 下拉刷新控件
-		initListView();
+		// 下拉刷新控件
+		initRefreshList();
 		// bottom_control - 底部互动栏,包括转发/评论/点赞
 		initControlBar();
 	}
@@ -133,18 +115,15 @@ public class StatusDetailActivity extends BaseActivity implements
 	}
 
 	private void initDetailHead() {
-		status_detail_info = View.inflate(this, R.layout.item_status, null);
-		status_detail_info.setBackgroundResource(R.color.white);
-		status_detail_info.findViewById(R.id.ll_bottom_control).setVisibility(View.GONE);
-		iv_avatar = (ImageView) status_detail_info.findViewById(R.id.iv_avatar);
-		tv_subhead = (TextView) status_detail_info.findViewById(R.id.tv_subhead);
-		tv_caption = (TextView) status_detail_info.findViewById(R.id.tv_caption);
-		include_status_image = (FrameLayout) status_detail_info.findViewById(R.id.include_status_image);
-		gv_images = (GridView) status_detail_info.findViewById(R.id.gv_images);
-		iv_image = (ImageView) status_detail_info.findViewById(R.id.iv_image);
-		tv_content = (TextView) status_detail_info.findViewById(R.id.tv_content);
-		include_retweeted_status = status_detail_info.findViewById(R.id.include_retweeted_status);
-		tv_retweeted_content = (TextView) status_detail_info.findViewById(R.id.tv_retweeted_content);
+		iv_avatar = (ImageView) findViewById(R.id.iv_avatar);
+		tv_subhead = (TextView) findViewById(R.id.tv_subhead);
+		tv_caption = (TextView) findViewById(R.id.tv_caption);
+		include_status_image = (FrameLayout) findViewById(R.id.include_status_image);
+		gv_images = (GridView) findViewById(R.id.gv_images);
+		iv_image = (ImageView) findViewById(R.id.iv_image);
+		tv_content = (TextView) findViewById(R.id.tv_content);
+		include_retweeted_status = findViewById(R.id.include_retweeted_status);
+		tv_retweeted_content = (TextView) findViewById(R.id.tv_retweeted_content);
 		fl_retweeted_imageview = (FrameLayout) include_retweeted_status.findViewById(R.id.include_status_image);
 		gv_retweeted_images = (GridView) fl_retweeted_imageview.findViewById(R.id.gv_images);
 		iv_retweeted_image = (ImageView) fl_retweeted_imageview.findViewById(R.id.iv_image);
@@ -152,67 +131,33 @@ public class StatusDetailActivity extends BaseActivity implements
 	}
 
 	private void initTab() {
-		// shadow
-		shadow_status_detail_tab = findViewById(R.id.status_detail_tab);
-		shadow_rg_status_detail = (RadioGroup) shadow_status_detail_tab
-				.findViewById(R.id.rg_status_detail);
-		shadow_rb_retweets = (RadioButton) shadow_status_detail_tab
-				.findViewById(R.id.rb_retweets);
-		shadow_rb_comments = (RadioButton) shadow_status_detail_tab
-				.findViewById(R.id.rb_comments);
-		shadow_rb_likes = (RadioButton) shadow_status_detail_tab
-				.findViewById(R.id.rb_likes);
-		shadow_rg_status_detail.setOnCheckedChangeListener(this);
-		// header
-		status_detail_tab = View.inflate(this, R.layout.status_detail_tab, null);
-		rg_status_detail = (RadioGroup) status_detail_tab
-				.findViewById(R.id.rg_status_detail);
-		rb_retweets = (RadioButton) status_detail_tab
-				.findViewById(R.id.rb_retweets);
-		rb_comments = (RadioButton) status_detail_tab
-				.findViewById(R.id.rb_comments);
-		rb_likes = (RadioButton) status_detail_tab
-				.findViewById(R.id.rb_likes);
-		rg_status_detail.setOnCheckedChangeListener(this);
+		String[] titles = {"转发", "评论", "赞"};
+		tab = (TabLayout) findViewById(R.id.tab);
+
+		vp = (ViewPager) findViewById(R.id.vp);
+		vp.setAdapter(new StatusDetailPagerAdapter(getSupportFragmentManager(), titles, status));
+
+		tab.setupWithViewPager(vp);
+		vp.setCurrentItem(1);
 	}
 
-	private void initListView() {
-		// listView - 下拉刷新控件
-		lv_status_detail = (ListView) findViewById(R.id.lv_status_detail);
+	private void initRefreshList() {
+		// 下拉刷新控件和列表
 		refresh = (SmartRefreshLayout) findViewById(R.id.refresh);
-		adapter = new StatusCommentAdapter(this, comments);
-		lv_status_detail.setAdapter(adapter);
-		// Refresh View - ListView
-		lv_status_detail.addHeaderView(status_detail_info);
-		lv_status_detail.addHeaderView(status_detail_tab);
 		// 下拉刷新监听
 		refresh.setOnRefreshListener(new OnRefreshListener() {
 			@Override
 			public void onRefresh(RefreshLayout refreshlayout) {
-				loadComments(1);
+				// TODO: 2017/8/21
+//				loadComments(1);
 			}
 		});
 		// 滑动到底部最后一个item监听
 		refresh.setOnLoadmoreListener(new OnLoadmoreListener() {
 			@Override
 			public void onLoadmore(RefreshLayout refreshlayout) {
-				loadComments(curPage + 1);
-			}
-		});
-		// 滚动状态监听
-		lv_status_detail.setOnScrollListener(new OnScrollListener() {
-
-			@Override
-			public void onScrollStateChanged(AbsListView view, int scrollState) {
-
-			}
-
-			@Override
-			public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-				// 0-pullHead 1-detailHead 2-tab
-				// 如果滑动到tab为第一个item时,则显示顶部隐藏的shadow_tab,作为悬浮菜单栏
-				shadow_status_detail_tab.setVisibility(firstVisibleItem >= 2 ?
-						View.VISIBLE : View.GONE);
+				// TODO: 2017/8/21
+//				loadComments(curPage + 1);
 			}
 		});
 	}
@@ -234,8 +179,10 @@ public class StatusDetailActivity extends BaseActivity implements
 	private void setData() {
 		// listView headerView - 微博信息
 		User user = status.getUser();
-		Glide.with(this).load(user.getAvatarUrl()).into(iv_avatar);
-		tv_subhead.setText(user.getNickname());
+		if(user != null) {
+			Glide.with(this).load(user.getAvatarUrl()).into(iv_avatar);
+			tv_subhead.setText(user.getNickname());
+		}
 
 		// FIXME: 2017/8/15
 //		tv_caption.setText(DateUtils.getShortTime(status.getCreated_at()) +
@@ -266,15 +213,6 @@ public class StatusDetailActivity extends BaseActivity implements
 //		} else {
 //			include_retweeted_status.setVisibility(View.GONE);
 //		}
-		
-		// shadow_tab - 顶部悬浮的菜单栏
-		shadow_rb_retweets.setText("转发");
-		shadow_rb_comments.setText("评论");
-		shadow_rb_likes.setText("赞");
-		// listView headerView - 添加至列表中作为header的菜单栏
-		rb_retweets.setText("转发");
-		rb_comments.setText("评论");
-		rb_likes.setText("赞");
 		
 		// bottom_control - 底部互动栏,包括转发/评论/点赞
 		tv_share_bottom.setText("转发");
@@ -327,81 +265,6 @@ public class StatusDetailActivity extends BaseActivity implements
 		}
 	}
 
-	/**
-	 * 根据微博ID返回某条微博的评论列表
-	 * 
-	 * @param page
-	 *            页数
-	 */
-	private void loadComments(final int page) {
-		// FIXME: 2017/8/15
-//		WbHttpRequest.getInstance()
-//				.getApiService()
-//				.commentsShow(status.getId(), page)
-//				.compose(RxComposer.<CommentListResponse>commonProgress(this))
-//				.subscribe(new SimpleDisObserver<CommentListResponse>() {
-//					@Override
-//					public void onNext(CommentListResponse response) {
-//						// 如果是加载第一页(第一次进入,下拉刷新)时,先清空已有数据
-//						if (page == 1) {
-//							comments.clear();
-//						}
-//
-//						// 更新评论数信息
-//						tv_comment_bottom.setText(response.getTotal_number() == 0 ?
-//								"评论" : response.getTotal_number() + "");
-//						shadow_rb_comments.setText("评论 " + response.getTotal_number());
-//						rb_comments.setText("评论 " + response.getTotal_number());
-//
-//						// 将获取的评论信息添加到列表上
-//						addData(response);
-//
-//						// 判断是否需要滚动至评论部分
-//						if(scroll2Comment) {
-//							lv_status_detail.setSelection(2);
-//							scroll2Comment = false;
-//						}
-//					}
-//
-//					@Override
-//					public void onError(Throwable e) {
-//						// 通知下拉刷新控件完成刷新
-//						// TODO: 2017/8/8
-////						refresh.onRefreshComplete();
-//					}
-//				});
-	}
-
-//	private void addData(CommentListResponse response) {
-//		// 将获取到的数据添加至列表中,重复数据不添加
-//		for (Comment comment : response.getComments()) {
-//			if (!comments.contains(comment)) {
-//				comments.add(comment);
-//			}
-//		}
-//		// 添加完后,通知ListView刷新页面数据
-//		adapter.notifyDataSetChanged();
-//
-//		// 用条数判断,当前评论数是否达到总评论数,未达到则添加更多加载footView,反之移除
-//		if (comments.size() < response.getTotal_number()) {
-//			addFootView(footView);
-//		} else {
-//			removeFootView(footView);
-//		}
-//	}
-
-	private void addFootView(View footView) {
-		if (lv_status_detail.getFooterViewsCount() == 1) {
-			lv_status_detail.addFooterView(footView);
-		}
-	}
-
-	private void removeFootView(View footView) {
-		if (lv_status_detail.getFooterViewsCount() > 1) {
-			lv_status_detail.removeFooterView(footView);
-		}
-	}
-
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
@@ -427,28 +290,6 @@ public class StatusDetailActivity extends BaseActivity implements
 	}
 
 	@Override
-	public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-		// 更新tab菜单栏某个选项时,注意header的菜单栏和shadow菜单栏的选中状态同步
-		switch (checkedId) {
-		case R.id.rb_retweets:
-			rb_retweets.setChecked(true);
-			shadow_rb_retweets.setChecked(true);
-			break;
-		case R.id.rb_comments:
-			rb_comments.setChecked(true);
-			shadow_rb_comments.setChecked(true);
-			break;
-		case R.id.rb_likes:
-			rb_likes.setChecked(true);
-			shadow_rb_likes.setChecked(true);
-			break;
-		default:
-			break;
-		}
-	}
-
-	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
@@ -463,7 +304,8 @@ public class StatusDetailActivity extends BaseActivity implements
 			boolean sendCommentSuccess = data.getBooleanExtra("sendCommentSuccess", false);
 			if(sendCommentSuccess) {
 				scroll2Comment = true;
-				loadComments(1);
+				// TODO: 2017/8/21
+//				loadComments(1);
 			}
 			break;
 
@@ -471,5 +313,5 @@ public class StatusDetailActivity extends BaseActivity implements
 			break;
 		}
 	}
-	
+
 }

@@ -2,11 +2,12 @@ package com.boredream.weibo.adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.v7.widget.RecyclerView;
 import android.text.SpannableString;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,63 +23,39 @@ import com.bumptech.glide.Glide;
 
 import java.util.List;
 
-public class StatusCommentAdapter extends BaseAdapter {
-	
+public class StatusCommentRvAdapter extends RecyclerView.Adapter<StatusCommentRvAdapter.ViewHolder> {
+
 	private Context context;
 	private List<Comment> comments;
 
-	public StatusCommentAdapter(Context context, List<Comment> comments) {
+	public StatusCommentRvAdapter(Context context, List<Comment> comments) {
 		this.context = context;
 		this.comments = comments;
 	}
 	
 	@Override
-	public int getCount() {
+	public int getItemCount() {
 		return comments.size();
 	}
 
 	@Override
-	public Comment getItem(int position) {
-		return comments.get(position);
+	public StatusCommentRvAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+		View v = LayoutInflater.from(context).inflate(R.layout.item_comment, parent, false);
+		return new ViewHolder(v);
 	}
 
 	@Override
-	public long getItemId(int position) {
-		return position;
-	}
-
-	@Override
-	public View getView(int position, View convertView, ViewGroup parent) {
-		ViewHolderList holder;
-		if (convertView == null) {
-			holder = new ViewHolderList();
-			convertView = View.inflate(context, R.layout.item_comment, null);
-			holder.ll_comments = (LinearLayout) convertView
-					.findViewById(R.id.ll_comments);
-			holder.iv_avatar = (ImageView) convertView
-					.findViewById(R.id.iv_avatar);
-			holder.tv_subhead = (TextView) convertView
-					.findViewById(R.id.tv_subhead);
-			holder.tv_caption = (TextView) convertView
-					.findViewById(R.id.tv_caption);
-			holder.tv_comment = (TextView) convertView
-					.findViewById(R.id.tv_comment);
-			convertView.setTag(holder);
-		} else {
-			holder = (ViewHolderList) convertView.getTag();
-		}
-
-		Comment comment = getItem(position);
+	public void onBindViewHolder(StatusCommentRvAdapter.ViewHolder holder, int position) {
+		Comment comment = comments.get(position);
 		final User user = comment.getUser();
 
 		Glide.with(context).load(user.getAvatarUrl()).into(holder.iv_avatar);
 		holder.tv_subhead.setText(user.getNickname());
-		// FIXME: 2017/8/15
 //		holder.tv_caption.setText(DateUtils.getShortTime(comment.getCreated_at()));
 		SpannableString weiboContent = StringUtils.getWeiboContent(
 				context, holder.tv_comment, comment.getText());
 		holder.tv_comment.setText(weiboContent);
-		
+
 		holder.iv_avatar.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -87,7 +64,7 @@ public class StatusCommentAdapter extends BaseAdapter {
 				context.startActivity(intent);
 			}
 		});
-		
+
 		holder.tv_subhead.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -96,23 +73,31 @@ public class StatusCommentAdapter extends BaseAdapter {
 				context.startActivity(intent);
 			}
 		});
-		
+
 		holder.ll_comments.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				ToastUtils.showToast(context, "回复评论", Toast.LENGTH_SHORT);
 			}
 		});
-		
-		return convertView;
 	}
-	
-	public static class ViewHolderList {
+
+	public static class ViewHolder extends RecyclerView.ViewHolder {
 		public LinearLayout ll_comments;
 		public ImageView iv_avatar;
 		public TextView tv_subhead;
 		public TextView tv_caption;
 		public TextView tv_comment;
+
+		public ViewHolder(View itemView) {
+			super(itemView);
+
+			ll_comments = (LinearLayout) itemView.findViewById(R.id.ll_comments);
+			iv_avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
+			tv_subhead = (TextView) itemView.findViewById(R.id.tv_subhead);
+			tv_caption = (TextView) itemView.findViewById(R.id.tv_caption);
+			tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
+		}
 	}
 
 }

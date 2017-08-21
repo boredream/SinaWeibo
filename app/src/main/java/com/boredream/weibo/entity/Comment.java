@@ -11,8 +11,17 @@ import com.boredream.bdcodehelper.lean.entity.Pointer;
  */
 public class Comment extends Pointer {
 
+    private Goods status;
     private User user;
     private String text;
+
+    public Goods getStatus() {
+        return status;
+    }
+
+    public void setStatus(Goods status) {
+        this.status = status;
+    }
 
     public User getUser() {
         return user;

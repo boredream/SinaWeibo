@@ -10,7 +10,7 @@ import android.widget.ImageView;
 import com.bilibili.boxing.BoxingMediaLoader;
 import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.loader.IBoxingMediaLoader;
-import com.boredream.bdcodehelper.base.AppKeeper;
+import com.boredream.bdcodehelper.constants.AppKeeper;
 import com.boredream.bdcodehelper.net.GlideHelper;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;

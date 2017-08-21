@@ -47,14 +47,14 @@ public class HomeFragment extends BaseFragment {
 	}
 
 	private void initView() {
-		view = View.inflate(activity, R.layout.frag_home, null);
+		view = View.inflate(getActivity(), R.layout.frag_home, null);
 
 		TitleBarView titlebar = (TitleBarView) view.findViewById(R.id.titlebar);
 		titlebar.setTitleText("首页");
 
 		refresh = (SmartRefreshLayout) view.findViewById(R.id.refresh);
 		lv_home = (ListView) view.findViewById(R.id.lv_home);
-		adapter = new StatusAdapter(activity, statuses);
+		adapter = new StatusAdapter(getActivity(), statuses);
 		lv_home.setAdapter(adapter);
 		refresh.setOnRefreshListener(new OnRefreshListener() {
 			@Override
@@ -79,7 +79,7 @@ public class HomeFragment extends BaseFragment {
 				.getApiService()
 				.statusesHome(request)
 				.compose(LcRxCompose.<Goods>handleListResponse())
-				.compose(RxComposer.<ArrayList<Goods>>commonRefresh(activity, page>1, refresh))
+				.compose(RxComposer.<ArrayList<Goods>>commonRefresh(this, page>1, refresh))
 				.subscribe(new SimpleDisObserver<ArrayList<Goods>>() {
 
 					@Override

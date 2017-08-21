@@ -2,6 +2,7 @@ package com.boredream.weibo.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -10,13 +11,14 @@ import android.widget.ImageView;
 
 import com.boredream.bdcodehelper.lean.LcUtils;
 import com.boredream.bdcodehelper.net.SimpleDisObserver;
+import com.boredream.bdcodehelper.utils.DisplayUtils;
 import com.boredream.bdcodehelper.view.TitleBarView;
+import com.boredream.emotion.EmotionUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
 import com.boredream.weibo.constants.UserInfoKeeper;
 import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.Goods;
-import com.boredream.weibo.entity.User;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.net.WbHttpRequest;
 
@@ -31,6 +33,8 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 	private ImageView iv_at;
 	private ImageView iv_topic;
 	private ImageView iv_emoji;
+	private View ll_emotion_dashboard;
+	private ViewPager vp_emotion_dashboard;
 	private ImageView iv_add;
 	// 待评论的微博
 	private Goods status;
@@ -65,6 +69,8 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 		iv_at = (ImageView) findViewById(R.id.iv_at);
 		iv_topic = (ImageView) findViewById(R.id.iv_topic);
 		iv_emoji = (ImageView) findViewById(R.id.iv_emoji);
+		ll_emotion_dashboard = findViewById(R.id.ll_emotion_dashboard);
+		vp_emotion_dashboard = (ViewPager) findViewById(R.id.vp_emotion_dashboard);
 		iv_add = (ImageView) findViewById(R.id.iv_add);
 
 		iv_image.setOnClickListener(this);
@@ -72,6 +78,9 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 		iv_topic.setOnClickListener(this);
 		iv_emoji.setOnClickListener(this);
 		iv_add.setOnClickListener(this);
+
+		EmotionUtils.initEmotion(vp_emotion_dashboard, et_write_status, 50, 7, 3,
+				DisplayUtils.getScreenWidthPixels(this), DisplayUtils.dp2px(this, 8));
 	}
 
 	private void sendComment() {
@@ -83,8 +92,8 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 
 		final Map<String, Object> request = new HashMap<>();
 		request.put("text", comment);
-		User currentUser = UserInfoKeeper.getInstance().getCurrentUser();
-		request.put("user", LcUtils.getPointer(currentUser));
+		request.put("user", LcUtils.getPointer(UserInfoKeeper.getInstance().getCurrentUser()));
+		request.put("status", LcUtils.getPointer(status));
 
 		WbHttpRequest.getInstance()
 				.getApiService()
@@ -109,14 +118,25 @@ public class WriteCommentActivity extends BaseActivity implements OnClickListene
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.iv_image:
+			showTip("coming soon~");
 			break;
 		case R.id.iv_at:
+			showTip("coming soon~");
 			break;
 		case R.id.iv_topic:
+			showTip("coming soon~");
 			break;
 		case R.id.iv_emoji:
+			if(ll_emotion_dashboard.getVisibility() == View.VISIBLE) {
+				ll_emotion_dashboard.setVisibility(View.GONE);
+				iv_emoji.setImageResource(R.drawable.btn_insert_emotion);
+			} else {
+				ll_emotion_dashboard.setVisibility(View.VISIBLE);
+				iv_emoji.setImageResource(R.drawable.btn_insert_keyboard);
+			}
 			break;
 		case R.id.iv_add:
+			showTip("coming soon~");
 			break;
 		}
 	}

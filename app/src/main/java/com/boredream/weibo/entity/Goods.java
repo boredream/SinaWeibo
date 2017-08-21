@@ -18,6 +18,21 @@ public class Goods extends Pointer {
     private String image;
     private String name;
     private String link;
+    private int worth;
+
+    public ArrayList<String> getImages() {
+        ArrayList<String> images = new ArrayList<>();
+        if(StringUtils.isEmpty(image)) {
+            return images;
+        }
+        for (String s : image.split("\\|")) {
+            if(StringUtils.isEmpty(s)) {
+                continue;
+            }
+            images.add(s);
+        }
+        return images;
+    }
 
     public User getUser() {
         return user;
@@ -35,20 +50,6 @@ public class Goods extends Pointer {
         this.image = image;
     }
 
-    public ArrayList<String> getImages() {
-        ArrayList<String> images = new ArrayList<>();
-        if(StringUtils.isEmpty(image)) {
-            return images;
-        }
-        for (String s : image.split("\\|")) {
-            if(StringUtils.isEmpty(s)) {
-                continue;
-            }
-            images.add(s);
-        }
-        return images;
-    }
-
     public String getName() {
         return name;
     }
@@ -63,5 +64,13 @@ public class Goods extends Pointer {
 
     public void setLink(String link) {
         this.link = link;
+    }
+
+    public int getWorth() {
+        return worth;
+    }
+
+    public void setWorth(int worth) {
+        this.worth = worth;
     }
 }

@@ -30,7 +30,7 @@
                 android:background="@color/transparent"
                 android:gravity="top"
                 android:minLines="3"
-                android:maxLength="140"
+                android:maxLength="50"
                 android:hint="写评论..."
                 android:textColorHint="@color/txt_gray" />
 
