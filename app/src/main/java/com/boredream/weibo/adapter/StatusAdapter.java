@@ -16,10 +16,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.boredream.bdcodehelper.lean.LcUtils;
 import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.weibo.R;
 import com.boredream.weibo.activity.StatusDetail2Activity;
-import com.boredream.weibo.activity.StatusDetailActivity;
 import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.activity.WeiboImageBrowserActivity;
 import com.boredream.weibo.activity.WriteCommentActivity;
@@ -123,9 +123,7 @@ public class StatusAdapter extends BaseAdapter {
 		final User user = status.getUser();
 		Glide.with(context).load(user.getAvatarUrl()).into(holder.iv_avatar);
 		holder.tv_subhead.setText(user.getNickname());
-		// FIXME: 2017/8/15
-//		holder.tv_caption.setText(DateUtils.getShortTime(status.getCreated_at())
-//				+ " 来自 " + Html.fromHtml(status.getSource()));
+		holder.tv_caption.setText(LcUtils.getDate(status.getCreatedAt()));
 		holder.tv_content.setText(StringUtils.getWeiboContent(
 				context, holder.tv_content, status.getName()));
 		
@@ -149,24 +147,6 @@ public class StatusAdapter extends BaseAdapter {
 		
 		setImages(status, holder.include_status_image, holder.gv_images, holder.iv_image);
 
-		// FIXME: 2017/8/15
-//		final Status retweeted_status = status.getRetweeted_status();
-//		if(retweeted_status != null) {
-//			User retUser = retweeted_status.getUser();
-//
-//			holder.include_retweeted_status.setVisibility(View.VISIBLE);
-//			String retweetedContent = "@" + retUser.getName() + ":"
-//					+ retweeted_status.getText();
-//			holder.tv_retweeted_content.setText(StringUtils.getWeiboContent(
-//					context, holder.tv_retweeted_content, retweetedContent));
-//
-//			setImages(retweeted_status,
-//					holder.include_retweeted_status_image,
-//					holder.gv_retweeted_images, holder.iv_retweeted_image);
-//		} else {
-//			holder.include_retweeted_status.setVisibility(View.GONE);
-//		}
-		
 		holder.tv_share_bottom.setText("转发");
 		holder.tv_comment_bottom.setText("评论");
 		holder.tv_like_bottom.setText(StringUtils.getStringWithCount("赞", status.getWorth()));
@@ -177,16 +157,7 @@ public class StatusAdapter extends BaseAdapter {
 				StatusDetail2Activity.start(context, status);
 			}
 		});
-		
-//		holder.include_retweeted_status.setOnClickListener(new OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				Intent intent = new Intent(context, StatusDetailActivity.class);
-//				intent.putExtra("status", retweeted_status);
-//				context.startActivity(intent);
-//			}
-//		});
-		
+
 		holder.ll_share_bottom.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {

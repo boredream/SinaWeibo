@@ -154,7 +154,7 @@ public class UserInfoActivity extends BaseActivity implements OnCheckedChangeLis
 			}
 		});
 
-		// TODO: 2017/8/8
+		// 同微博详情页处理
 //		lv_user_info.setOnScrollChangeListener(new View.OnScrollChangeListener() {
 //			@Override
 //			public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {

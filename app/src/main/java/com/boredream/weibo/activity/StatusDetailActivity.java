@@ -148,7 +148,6 @@ public class StatusDetailActivity extends BaseActivity implements OnClickListene
 		refresh.setOnRefreshListener(new OnRefreshListener() {
 			@Override
 			public void onRefresh(RefreshLayout refreshlayout) {
-				// TODO: 2017/8/21
 //				loadComments(1);
 			}
 		});
@@ -156,7 +155,6 @@ public class StatusDetailActivity extends BaseActivity implements OnClickListene
 		refresh.setOnLoadmoreListener(new OnLoadmoreListener() {
 			@Override
 			public void onLoadmore(RefreshLayout refreshlayout) {
-				// TODO: 2017/8/21
 //				loadComments(curPage + 1);
 			}
 		});
@@ -184,7 +182,6 @@ public class StatusDetailActivity extends BaseActivity implements OnClickListene
 			tv_subhead.setText(user.getNickname());
 		}
 
-		// FIXME: 2017/8/15
 //		tv_caption.setText(DateUtils.getShortTime(status.getCreated_at()) +
 //				"  来自" + Html.fromHtml(status.getSource()));
 
@@ -199,7 +196,6 @@ public class StatusDetailActivity extends BaseActivity implements OnClickListene
 			tv_content.setText(weiboContent);
 		}
 
-		// FIXME: 2017/8/15 转发
 //		Goods retweetedStatus = status.getRetweeted_status();
 //		if (retweetedStatus != null) {
 //			include_retweeted_status.setVisibility(View.VISIBLE);
@@ -304,7 +300,6 @@ public class StatusDetailActivity extends BaseActivity implements OnClickListene
 			boolean sendCommentSuccess = data.getBooleanExtra("sendCommentSuccess", false);
 			if(sendCommentSuccess) {
 				scroll2Comment = true;
-				// TODO: 2017/8/21
 //				loadComments(1);
 			}
 			break;

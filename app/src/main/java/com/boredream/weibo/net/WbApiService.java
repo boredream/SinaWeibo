@@ -10,7 +10,6 @@ import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.entity.User;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import io.reactivex.Observable;
