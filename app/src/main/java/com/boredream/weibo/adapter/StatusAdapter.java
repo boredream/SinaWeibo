@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.boredream.bdcodehelper.utils.ToastUtils;
 import com.boredream.weibo.R;
+import com.boredream.weibo.activity.StatusDetail2Activity;
 import com.boredream.weibo.activity.StatusDetailActivity;
 import com.boredream.weibo.activity.UserInfoActivity;
 import com.boredream.weibo.activity.WeiboImageBrowserActivity;
@@ -173,7 +174,7 @@ public class StatusAdapter extends BaseAdapter {
 		holder.ll_card_content.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				StatusDetailActivity.start(context, status);
+				StatusDetail2Activity.start(context, status);
 			}
 		});
 		

@@ -18,7 +18,9 @@ import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.net.WbHttpRequest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.annotations.NonNull;
 
@@ -44,7 +46,7 @@ public class StatusCommentListFragment extends BaseFragment {
         view = View.inflate(getActivity(), R.layout.frag_status_commentlist, null);
         initExtras();
         initView(view);
-        initData();
+        loadComments(1);
         return view;
     }
 
@@ -59,27 +61,28 @@ public class StatusCommentListFragment extends BaseFragment {
         rv.setAdapter(adapter);
     }
 
-    private void initData() {
+    private void loadComments(final int page) {
         // TODO: 2017/8/18 所屬
+        Map<String, Object> request = new HashMap<>();
+        request.put("page", page);
+        request.put("include", "user");
+
         WbHttpRequest.getInstance()
                 .getApiService()
-                .commentsShow(1)
+                .commentsShow(request)
                 .compose(LcRxCompose.<Comment>handleListResponse())
                 .compose(CommonRxComposer.<ArrayList<Comment>>schedulers())
                 .compose(CommonRxComposer.<ArrayList<Comment>>lifecycle(this))
                 .compose(LcRxCompose.<ArrayList<Comment>>defaultFailed(this))
                 .subscribe(new SimpleDisObserver<ArrayList<Comment>>() {
                     @Override
-                    public void onNext(@NonNull ArrayList<Comment> comments) {
-                        setResponse(comments);
+                    public void onNext(@NonNull ArrayList<Comment> response) {
+                        if(page == 1) {
+                            comments.clear();
+                        }
+                        comments.addAll(response);
+                        adapter.notifyDataSetChanged();
                     }
                 });
-    }
-
-    private void setResponse(ArrayList<Comment> comments) {
-        this.comments.clear();
-        this.comments.addAll(comments);
-
-        adapter.notifyDataSetChanged();
     }
 }

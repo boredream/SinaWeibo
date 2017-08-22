@@ -44,15 +44,9 @@
 
             </FrameLayout>
 
-            <android.support.design.widget.TabLayout
+            <include
                 android:id="@+id/tab"
-                app:tabBackground="@color/white"
-                app:tabIndicatorColor="@color/colorPrimary"
-                app:tabTextColor="@color/txt_black"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-            </android.support.design.widget.TabLayout>
+                layout="@layout/include_status_detail_tab" />
 
             <View
                 android:background="@color/divider_gray"

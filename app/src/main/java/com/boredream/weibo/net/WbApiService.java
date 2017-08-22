@@ -126,7 +126,7 @@ public interface WbApiService {
     // 微博评论列表
     @GET("1/classes/Comment")
     Observable<ListResponse<Comment>> commentsShow(
-            @Query("page") int page);
+            @QueryMap Map<String, Object> request);
 
     // 对一条微博进行评论
     @POST("1/classes/Comment")

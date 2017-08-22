@@ -47,42 +47,11 @@ public class StatusCommentRvAdapter extends RecyclerView.Adapter<StatusCommentRv
 	@Override
 	public void onBindViewHolder(StatusCommentRvAdapter.ViewHolder holder, int position) {
 		Comment comment = comments.get(position);
-		final User user = comment.getUser();
-
-		Glide.with(context).load(user.getAvatarUrl()).into(holder.iv_avatar);
-		holder.tv_subhead.setText(user.getNickname());
-//		holder.tv_caption.setText(DateUtils.getShortTime(comment.getCreated_at()));
-		SpannableString weiboContent = StringUtils.getWeiboContent(
-				context, holder.tv_comment, comment.getText());
-		holder.tv_comment.setText(weiboContent);
-
-		holder.iv_avatar.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(context, UserInfoActivity.class);
-				intent.putExtra("userName", user.getNickname());
-				context.startActivity(intent);
-			}
-		});
-
-		holder.tv_subhead.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				Intent intent = new Intent(context, UserInfoActivity.class);
-				intent.putExtra("userName", user.getNickname());
-				context.startActivity(intent);
-			}
-		});
-
-		holder.ll_comments.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				ToastUtils.showToast(context, "回复评论", Toast.LENGTH_SHORT);
-			}
-		});
+		holder.bindData(comment);
 	}
 
 	public static class ViewHolder extends RecyclerView.ViewHolder {
+		private Context context;
 		public LinearLayout ll_comments;
 		public ImageView iv_avatar;
 		public TextView tv_subhead;
@@ -92,11 +61,48 @@ public class StatusCommentRvAdapter extends RecyclerView.Adapter<StatusCommentRv
 		public ViewHolder(View itemView) {
 			super(itemView);
 
+			context = itemView.getContext();
 			ll_comments = (LinearLayout) itemView.findViewById(R.id.ll_comments);
 			iv_avatar = (ImageView) itemView.findViewById(R.id.iv_avatar);
 			tv_subhead = (TextView) itemView.findViewById(R.id.tv_subhead);
 			tv_caption = (TextView) itemView.findViewById(R.id.tv_caption);
 			tv_comment = (TextView) itemView.findViewById(R.id.tv_comment);
+		}
+
+		public void bindData(Comment comment) {
+			final User user = comment.getUser();
+
+			Glide.with(context).load(user.getAvatarUrl()).into(iv_avatar);
+			tv_subhead.setText(user.getNickname());
+//		tv_caption.setText(DateUtils.getShortTime(comment.getCreated_at()));
+			SpannableString weiboContent = StringUtils.getWeiboContent(
+					context, tv_comment, comment.getText());
+			tv_comment.setText(weiboContent);
+
+			iv_avatar.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(context, UserInfoActivity.class);
+					intent.putExtra("userName", user.getNickname());
+					context.startActivity(intent);
+				}
+			});
+
+			tv_subhead.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					Intent intent = new Intent(context, UserInfoActivity.class);
+					intent.putExtra("userName", user.getNickname());
+					context.startActivity(intent);
+				}
+			});
+
+			ll_comments.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					ToastUtils.showToast(context, "回复评论", Toast.LENGTH_SHORT);
+				}
+			});
 		}
 	}
 
