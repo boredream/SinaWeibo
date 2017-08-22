@@ -31,18 +31,27 @@ public class StatusDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     private static final int ITEM_VIEW_TYPE_STATUS = 110;
     private static final int ITEM_VIEW_TYPE_TAB = 119;
     private static final int ITEM_VIEW_TYPE_COMMENT = 120;
-    
+
     private Context context;
     private Goods status;
-    private int curTab;
     private List<Comment> comments;
-    private final LayoutInflater inflater;
+    private TabLayout tab_mock;
+    private LayoutInflater inflater;
+    private int curTab;
+    private TabViewHolder tabViewHolder;
 
-    public StatusDetailAdapter(Context context, Goods status, List<Comment> comments) {
+    public StatusDetailAdapter(Context context, Goods status, List<Comment> comments, TabLayout tab_mock) {
         this.context = context;
         this.status = status;
         this.comments = comments;
+        this.tab_mock = tab_mock;
+        this.curTab = tab_mock.getSelectedTabPosition();
         this.inflater = LayoutInflater.from(context);
+    }
+
+    public void setTab(int position) {
+        curTab = position;
+        tabViewHolder.tab.getTabAt(curTab).select();
     }
 
     @Override
@@ -66,7 +75,26 @@ public class StatusDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if(viewType == ITEM_VIEW_TYPE_STATUS) {
             return new StatusDetailViewHolder(inflater.inflate(R.layout.include_status_content, parent, false));
         } else if(viewType == ITEM_VIEW_TYPE_TAB) {
-            return new TabViewHolder(inflater.inflate(R.layout.include_status_detail_tab, parent, false));
+            tabViewHolder = new TabViewHolder(inflater.inflate(R.layout.include_status_detail_tab, parent, false));
+            tabViewHolder.tab.getTabAt(curTab).select();
+            tabViewHolder.tab.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+                @Override
+                public void onTabSelected(TabLayout.Tab tab) {
+                    curTab = tab.getPosition();
+                    tab_mock.getTabAt(curTab).select();
+                }
+
+                @Override
+                public void onTabUnselected(TabLayout.Tab tab) {
+
+                }
+
+                @Override
+                public void onTabReselected(TabLayout.Tab tab) {
+
+                }
+            });
+            return tabViewHolder;
         } else {
             return new StatusCommentRvAdapter.ViewHolder(inflater.inflate(R.layout.item_comment, parent, false));
         }
@@ -78,7 +106,7 @@ public class StatusDetailAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         if(viewType == ITEM_VIEW_TYPE_STATUS) {
             ((StatusDetailViewHolder)holder).bindData(status);
         } else if(viewType == ITEM_VIEW_TYPE_TAB) {
-            ((TabViewHolder)holder).tab.getTabAt(curTab).select();
+            tabViewHolder.tab.getTabAt(curTab).select();
         } else {
             ((StatusCommentRvAdapter.ViewHolder)holder).bindData(comments.get(position-2));
         }

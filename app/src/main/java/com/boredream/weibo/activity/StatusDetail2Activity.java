@@ -12,7 +12,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.boredream.bdcodehelper.lean.net.LcRxCompose;
-import com.boredream.bdcodehelper.net.CommonRxComposer;
 import com.boredream.bdcodehelper.net.SimpleDisObserver;
 import com.boredream.bdcodehelper.view.TitleBarView;
 import com.boredream.weibo.BaseActivity;
@@ -101,11 +100,46 @@ public class StatusDetail2Activity extends BaseActivity implements OnClickListen
 	private void initTabList() {
 		tab_mock = (TabLayout) findViewById(R.id.tab_mock);
 		tab_mock.setVisibility(View.GONE);
+		tab_mock.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+			@Override
+			public void onTabSelected(TabLayout.Tab tab) {
+				adapter.setTab(tab.getPosition());
+			}
+
+			@Override
+			public void onTabUnselected(TabLayout.Tab tab) {
+
+			}
+
+			@Override
+			public void onTabReselected(TabLayout.Tab tab) {
+
+			}
+		});
 
 		rv = (RecyclerView) findViewById(R.id.rv);
 		rv.setLayoutManager(new LinearLayoutManager(this));
-		adapter = new StatusDetailAdapter(this, status, comments);
+		adapter = new StatusDetailAdapter(this, status, comments, tab_mock);
 		rv.setAdapter(adapter);
+		rv.addOnScrollListener(new RecyclerView.OnScrollListener() {
+			@Override
+			public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+				super.onScrollStateChanged(recyclerView, newState);
+			}
+
+			@Override
+			public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+				super.onScrolled(recyclerView, dx, dy);
+
+				LinearLayoutManager manager = (LinearLayoutManager) recyclerView.getLayoutManager();
+				if(manager.findFirstVisibleItemPosition() >= 1) {
+					// 如果第一个可见item位置大于等于tab的位置，就显示mock tab
+					tab_mock.setVisibility(View.VISIBLE);
+				} else {
+					tab_mock.setVisibility(View.GONE);
+				}
+			}
+		});
 
 		// 下拉刷新控件和列表
 		refresh = (SmartRefreshLayout) findViewById(R.id.refresh);
