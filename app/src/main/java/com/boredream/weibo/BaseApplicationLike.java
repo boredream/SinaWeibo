@@ -16,9 +16,11 @@ import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.loader.IBoxingMediaLoader;
 import com.boredream.bdcodehelper.constants.AppKeeper;
 import com.boredream.bdcodehelper.net.GlideHelper;
+import com.boredream.bdcodehelper.utils.ForegroundCallbacks;
 import com.boredream.weibo.tinker.Log.MyLogImp;
 import com.boredream.weibo.tinker.util.SampleApplicationContext;
 import com.boredream.weibo.tinker.util.TinkerManager;
+import com.boredream.weibo.tinker.util.Utils;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -115,6 +117,8 @@ public class BaseApplicationLike extends DefaultApplicationLike {
 
 		AppKeeper.init(getApplication());
 
+		checkBackground();
+
 		BoxingMediaLoader.getInstance().init(new IBoxingMediaLoader() {
 			@Override
 			public void displayThumbnail(@NonNull ImageView img, @NonNull String absPath, int width, int height) {
@@ -139,6 +143,20 @@ public class BaseApplicationLike extends DefaultApplicationLike {
 								callback.onSuccess();
 							}
 						});
+			}
+		});
+	}
+
+	private void checkBackground() {
+		ForegroundCallbacks.get(getApplication()).addListener(new ForegroundCallbacks.Listener() {
+			@Override
+			public void onBecameForeground() {
+				Utils.setBackground(false);
+			}
+
+			@Override
+			public void onBecameBackground() {
+				Utils.setBackground(true);
 			}
 		});
 	}

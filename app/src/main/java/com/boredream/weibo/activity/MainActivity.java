@@ -14,7 +14,6 @@ import com.boredream.weibo.fragment.HomeFragment;
 import com.boredream.weibo.fragment.MessageFragment;
 import com.boredream.weibo.fragment.SearchFragment;
 import com.boredream.weibo.fragment.UserFragment;
-import com.boredream.weibo.tinker.util.Utils;
 
 import java.util.ArrayList;
 
@@ -55,18 +54,5 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 			intent2Activity(WriteStatusActivity.class);
 			break;
 		}
-	}
-
-	@Override
-	protected void onResume() {
-		super.onResume();
-		Utils.setBackground(false);
-
-	}
-
-	@Override
-	protected void onPause() {
-		super.onPause();
-		Utils.setBackground(true);
 	}
 }
