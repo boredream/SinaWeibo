@@ -44,6 +44,8 @@ import com.tencent.tinker.loader.shareutil.ShareConstants;
 		loadVerifyFlag = false)
 public class BaseApplicationLike extends DefaultApplicationLike {
 
+	public static BaseApplicationLike instance;
+
 	static {
 		//设置全局的Header构建器
 		SmartRefreshLayout.setDefaultRefreshHeaderCreater(new DefaultRefreshHeaderCreater() {
@@ -108,6 +110,8 @@ public class BaseApplicationLike extends DefaultApplicationLike {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+
+		instance = this;
 
 		AppKeeper.init(getApplication());
 

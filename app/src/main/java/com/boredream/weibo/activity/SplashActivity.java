@@ -7,10 +7,10 @@ import com.boredream.bdcodehelper.lean.net.LcTokenKeeper;
 import com.boredream.bdcodehelper.utils.LogUtils;
 import com.boredream.weibo.BaseActivity;
 import com.boredream.weibo.R;
-import com.boredream.weibo.constants.UserInfoKeeper;
 import com.boredream.weibo.entity.User;
 import com.boredream.weibo.presenter.LoginContract;
 import com.boredream.weibo.presenter.LoginPresenter;
+import com.boredream.weibo.tinker.LoadTinkerManager;
 
 public class SplashActivity extends BaseActivity implements LoginContract.View {
 
@@ -34,6 +34,8 @@ public class SplashActivity extends BaseActivity implements LoginContract.View {
 				}
 			}
 		}
+
+		LoadTinkerManager.getInstance().checkUpdatePatch();
 
 		autoLogin();
 	}

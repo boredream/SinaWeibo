@@ -8,6 +8,7 @@ import com.boredream.bdcodehelper.lean.entity.UpdatePswRequest;
 import com.boredream.bdcodehelper.lean.entity.UserRegisterByMobilePhone;
 import com.boredream.weibo.entity.Comment;
 import com.boredream.weibo.entity.Goods;
+import com.boredream.weibo.entity.HotPatchInfo;
 import com.boredream.weibo.entity.User;
 
 import java.util.Map;
@@ -104,7 +105,11 @@ public interface WbApiService {
 
 
 
-    
+    // 热补丁检查更新
+    @GET("1/classes/HotFixPatch")
+    Observable<ListResponse<HotPatchInfo>> checkUpdateHotPatch(
+            @QueryMap Map<String, Object> request);
+
     // 获取某个用户最新发表的微博列表
     @GET("1/classes/Goods")
     Observable<ListResponse<Goods>> statusesUser(

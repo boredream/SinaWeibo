@@ -1,9 +1,7 @@
 package com.boredream.weibo.activity;
 
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
@@ -17,7 +15,6 @@ import com.boredream.weibo.fragment.MessageFragment;
 import com.boredream.weibo.fragment.SearchFragment;
 import com.boredream.weibo.fragment.UserFragment;
 import com.boredream.weibo.tinker.util.Utils;
-import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import java.util.ArrayList;
 
@@ -55,12 +52,7 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.iv_add:
-			// FIXME: 2017/10/23
-//			intent2Activity(WriteStatusActivity.class);
-
-			//等下要push到SD卡里面去apk，以达到更新的目的
-			TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(),
-					Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
+			intent2Activity(WriteStatusActivity.class);
 			break;
 		}
 	}
