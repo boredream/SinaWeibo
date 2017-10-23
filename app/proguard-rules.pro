@@ -32,12 +32,15 @@
   public static final android.os.Parcelable$Creator *;
 }
 
+-keep class * implements java.io.Serializable {*;} # 保持 Serializable 不被混淆
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {*;}
+
 -keepclassmembers class **.R$* { #不混淆R文件
     public static <fields>;
 }
 
 -dontwarn android.support.**
-##--- End android默认 ---
 
 ##--- For:不能被混淆的 ---
 -keep public class * extends android.app.Activity
@@ -56,6 +59,7 @@
 -keepclasseswithmembers class * {
     public <init>(android.content.Context, android.util.AttributeSet, int);
 }
+
 ##--- For:android-support-v4 ---
 -dontwarn android.support.v4.**
 -keep class android.support.v4.** { *; }
@@ -66,16 +70,8 @@
 -keep class * extends android.support.v4.app.** {*;}
 -keep class * extends android.support.v4.view.** {*;}
 
-##--- For:Serializable ---
--keep class * implements java.io.Serializable {*;}
--keepnames class * implements java.io.Serializable
--keepclassmembers class * implements java.io.Serializable {*;}
-
-##--- For:Gson ---
--keepattributes *Annotation*
--keep class sun.misc.Unsafe { *; }
--keep class com.idea.fifaalarmclock.entity.***
--keep class com.google.gson.stream.** { *; }
+##--- For:android-support-v7 ---
+-keep class android.support.v7.widget.**{*;}
 
 ##--- For:Remove log ---
 -assumenosideeffects class android.util.Log {
@@ -89,3 +85,80 @@
 
 -keepattributes *Annotation* #使用注解
 -keepattributes Signature #过滤泛型  出现类型转换错误时，启用这个
+
+
+
+
+#Glide
+-keep class com.wswy.chechengwang.thirdpartlib.glide.** {*;}
+
+# 友盟统计
+-keepclassmembers enum * {
+    public static **[] values();
+    public static ** valueOf(java.lang.String);
+}
+
+-keepclassmembers class * {
+   public <init> (org.json.JSONObject);
+}
+
+#nineOldAnimation
+-keep class com.nineoldandroids.** { *; }
+-dontwarn com.nineoldandroids.**
+
+# OkHttp3
+-keep class okhttp3.** { *; }
+-keep interface okhttp3.** { *; }
+-dontwarn okhttp3.**
+-dontwarn okio.**
+
+# Retrofit
+-dontwarn retrofit2.**
+-keep class retrofit2.** { *; }
+-keepattributes Signature
+-keepattributes Exceptions
+-keepclasseswithmembers class * {
+    @retrofit2.http.* <methods>;
+}
+-keep class com.wswy.chechengwang.network.** { *;}
+
+
+# RxJava RxAndroid
+-dontwarn sun.misc.**
+-keepclassmembers class rx.internal.util.unsafe.*ArrayQueue*Field* {
+    long producerIndex;
+    long consumerIndex;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueProducerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode producerNode;
+}
+-keepclassmembers class rx.internal.util.unsafe.BaseLinkedQueueConsumerNodeRef {
+    rx.internal.util.atomic.LinkedQueueNode consumerNode;
+}
+
+# Gson
+-keep class com.google.gson.stream.** { *; }
+-keepattributes EnclosingMethod
+-keep class sun.misc.Unsafe { *; }
+
+#eventBus
+-keepclassmembers class ** {
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode { *; }
+
+#fix bug -- Unmarshalling unknown type code xxxx at offset xxxx
+-keepclassmembers class * implements android.os.Parcelable {
+    static ** CREATOR;
+}
+
+# If you do not use RxJava:
+-dontwarn rx.**
+
+#bean类
+-keep class com.boredream.weibo.entity.**{*;}
+-keep class com.boredream.bdcodehelper.lean.entity.**{*;}
+
+#net
+-keep class com.boredream.weibo.net.**{*;}
+

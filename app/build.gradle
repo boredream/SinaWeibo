@@ -12,34 +12,35 @@ android {
         versionCode 1
         versionName "1.0"
     }
-    buildTypes {
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
 
     signingConfigs {
         release {
             keyAlias "boredream"
             keyPassword "58421314"
             storeFile file("boredream.jks")
-            storePassword "boredream"
+            storePassword "58421314"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile project(':bdcodehelper')
     compile project(':emotion')
     compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.3'
-
-    provided('com.tencent.tinker:tinker-android-anno:1.8.0')
-    compile('com.tencent.tinker:tinker-android-lib:1.8.0')
-    compile ("com.android.support:multidex:1.0.1")
+    provided 'com.tencent.tinker:tinker-android-anno:1.8.0'
+    compile 'com.tencent.tinker:tinker-android-lib:1.8.0'
+    compile 'com.android.support:multidex:1.0.1'
 }
 
 
@@ -69,11 +70,11 @@ ext {
 
     //for normal build
     //old apk file to build patch apk
-    tinkerOldApkPath = "${bakPath}/app-debug-1017-15-09-59.apk"
+    tinkerOldApkPath = "${bakPath}/app-release-1023-14-37-54.apk"
     //proguard mapping file to build patch apk
-    tinkerApplyMappingPath = "${bakPath}/app-debug-1018-17-32-47-mapping.txt"
+    tinkerApplyMappingPath = "${bakPath}/app-release-1023-14-37-54-mapping.txt"
     //resource R.txt to build patch apk, must input if there is resource changed
-    tinkerApplyResourcePath = "${bakPath}/app-debug-1017-15-09-59-R.txt"
+    tinkerApplyResourcePath = "${bakPath}/app-release-1023-14-37-54-R.txt"
 
     //only use for build all flavor, if not, just ignore this field
     tinkerBuildFlavorDirectory = "${bakPath}/app-1018-17-32-47"

@@ -16,6 +16,9 @@ import com.bilibili.boxing.loader.IBoxingCallback;
 import com.bilibili.boxing.loader.IBoxingMediaLoader;
 import com.boredream.bdcodehelper.constants.AppKeeper;
 import com.boredream.bdcodehelper.net.GlideHelper;
+import com.boredream.weibo.tinker.Log.MyLogImp;
+import com.boredream.weibo.tinker.util.SampleApplicationContext;
+import com.boredream.weibo.tinker.util.TinkerManager;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -29,6 +32,7 @@ import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.tencent.tinker.anno.DefaultLifeCycle;
+import com.tencent.tinker.lib.tinker.Tinker;
 import com.tencent.tinker.lib.tinker.TinkerInstaller;
 import com.tencent.tinker.loader.app.DefaultApplicationLike;
 import com.tencent.tinker.loader.shareutil.ShareConstants;
@@ -77,7 +81,23 @@ public class BaseApplicationLike extends DefaultApplicationLike {
 
 		//installTinker after load multiDex
 		//or you can put com.tencent.tinker.** to main dex
-		TinkerInstaller.install(this);
+//		TinkerInstaller.install(this);
+
+		SampleApplicationContext.application = getApplication();
+		SampleApplicationContext.context = getApplication();
+		TinkerManager.setTinkerApplicationLike(this);
+
+//		TinkerManager.initFastCrashProtect();
+		//should set before tinker is installed
+		TinkerManager.setUpgradeRetryEnable(true);
+
+		//optional set logIml, or you can use default debug log
+		TinkerInstaller.setLogIml(new MyLogImp());
+
+		//installTinker after load multiDex
+		//or you can put com.tencent.tinker.** to main dex
+		TinkerManager.installTinker(this);
+		Tinker tinker = Tinker.with(getApplication());
 	}
 
 	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
