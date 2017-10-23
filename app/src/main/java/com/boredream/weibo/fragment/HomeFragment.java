@@ -1,6 +1,7 @@
 package com.boredream.weibo.fragment;
 
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
+import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +52,16 @@ public class HomeFragment extends BaseFragment {
 		view = View.inflate(getActivity(), R.layout.frag_home, null);
 
 		TitleBarView titlebar = (TitleBarView) view.findViewById(R.id.titlebar);
-		titlebar.setTitleText("首页");
+		titlebar.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showTip("更新咯！！！");
+				//等下要push到SD卡里面去apk，以达到更新的目的
+				TinkerInstaller.onReceiveUpgradePatch(getContext(),
+						Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
+			}
+		});
+		titlebar.setTitleText("首页 NEW!!!");
 
 		refresh = (SmartRefreshLayout) view.findViewById(R.id.refresh);
 		lv_home = (ListView) view.findViewById(R.id.lv_home);

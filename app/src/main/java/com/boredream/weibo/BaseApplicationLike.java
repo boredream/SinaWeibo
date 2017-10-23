@@ -1,10 +1,14 @@
 package com.boredream.weibo;
 
+import android.annotation.TargetApi;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.multidex.MultiDex;
 import android.widget.ImageView;
 
 import com.bilibili.boxing.BoxingMediaLoader;
@@ -24,8 +28,17 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.constant.SpinnerStyle;
 import com.scwang.smartrefresh.layout.footer.ClassicsFooter;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.tencent.tinker.anno.DefaultLifeCycle;
+import com.tencent.tinker.lib.tinker.TinkerInstaller;
+import com.tencent.tinker.loader.app.DefaultApplicationLike;
+import com.tencent.tinker.loader.shareutil.ShareConstants;
 
-public class BaseApplication extends Application {
+
+@SuppressWarnings("unused")
+@DefaultLifeCycle(application = "com.boredream.weibo.BaseApplication",
+		flags = ShareConstants.TINKER_ENABLE_ALL,
+		loadVerifyFlag = false)
+public class BaseApplicationLike extends DefaultApplicationLike {
 
 	static {
 		//设置全局的Header构建器
@@ -45,11 +58,38 @@ public class BaseApplication extends Application {
 		});
 	}
 
+	public BaseApplicationLike(Application application, int tinkerFlags, boolean tinkerLoadVerifyFlag, long applicationStartElapsedTime, long applicationStartMillisTime, Intent tinkerResultIntent) {
+		super(application, tinkerFlags, tinkerLoadVerifyFlag, applicationStartElapsedTime, applicationStartMillisTime, tinkerResultIntent);
+	}
+
+	/**
+	 * install multiDex before install tinker
+	 * so we don't need to put the tinker lib classes in the main dex
+	 *
+	 * @param base
+	 */
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	@Override
+	public void onBaseContextAttached(Context base) {
+		super.onBaseContextAttached(base);
+		//you must install multiDex whatever tinker is installed!
+		MultiDex.install(base);
+
+		//installTinker after load multiDex
+		//or you can put com.tencent.tinker.** to main dex
+		TinkerInstaller.install(this);
+	}
+
+	@TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+	public void registerActivityLifecycleCallbacks(Application.ActivityLifecycleCallbacks callback) {
+		getApplication().registerActivityLifecycleCallbacks(callback);
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
 
-		AppKeeper.init(this);
+		AppKeeper.init(getApplication());
 
 		BoxingMediaLoader.getInstance().init(new IBoxingMediaLoader() {
 			@Override
@@ -59,7 +99,7 @@ public class BaseApplication extends Application {
 
 			@Override
 			public void displayRaw(@NonNull final ImageView img, @NonNull String absPath, int width, int height, final IBoxingCallback callback) {
-				Glide.with(getApplicationContext())
+				Glide.with(getApplication())
 						.load(absPath)
 						.into(new SimpleTarget<Drawable>() {
 

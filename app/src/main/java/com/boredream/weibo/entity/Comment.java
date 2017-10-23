@@ -2,13 +2,6 @@ package com.boredream.weibo.entity;
 
 import com.boredream.bdcodehelper.lean.entity.Pointer;
 
-/**
- * <pre>
- *     author : lichunyang
- *     time   : 2017/08/15
- *     desc   :
- * </pre>
- */
 public class Comment extends Pointer {
 
     private Goods status;
