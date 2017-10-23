@@ -154,6 +154,7 @@
 
 # If you do not use RxJava:
 -dontwarn rx.**
+-dontwarn com.trello.rxlifecycle2.**
 
 #bean类
 -keep class com.boredream.weibo.entity.**{*;}

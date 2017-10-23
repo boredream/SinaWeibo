@@ -58,9 +58,8 @@ public class MainActivity extends BaseActivity implements OnClickListener {
 			// FIXME: 2017/10/23
 //			intent2Activity(WriteStatusActivity.class);
 
-			showTip("更新咯！！！");
 			//等下要push到SD卡里面去apk，以达到更新的目的
-			TinkerInstaller.onReceiveUpgradePatch(this,
+			TinkerInstaller.onReceiveUpgradePatch(getApplicationContext(),
 					Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk");
 			break;
 		}

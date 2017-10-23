@@ -19,7 +19,6 @@ package com.boredream.weibo.tinker.reporter;
 import android.app.ActivityManager;
 import android.content.Context;
 
-import com.boredream.weibo.tinker.BuildInfo;
 import com.boredream.weibo.tinker.util.Utils;
 import com.tencent.tinker.lib.listener.DefaultPatchListener;
 import com.tencent.tinker.lib.util.TinkerLog;
@@ -87,7 +86,7 @@ public class SamplePatchListener extends DefaultPatchListener {
                 String platform = properties.getProperty(Utils.PLATFORM);
                 TinkerLog.i(TAG, "get platform:" + platform);
                 // check patch platform require
-                if (platform == null || !platform.equals(BuildInfo.PLATFORM)) {
+                if (platform == null || !platform.equals("all")) {
                     returnCode = Utils.ERROR_PATCH_CONDITION_NOT_SATISFIED;
                 }
             }

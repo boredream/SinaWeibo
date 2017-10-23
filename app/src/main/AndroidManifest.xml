@@ -17,6 +17,11 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         tools:replace="android:label,android:theme">
+
+        <service
+            android:name=".tinker.service.SampleResultService"
+            android:exported="false"/>
+
         <activity
             android:name=".activity.SplashActivity"
             android:label="@string/app_name">

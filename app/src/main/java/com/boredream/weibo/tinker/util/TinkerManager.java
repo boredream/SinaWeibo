@@ -16,6 +16,7 @@
 
 package com.boredream.weibo.tinker.util;
 
+import com.boredream.weibo.tinker.crash.SampleUncaughtExceptionHandler;
 import com.boredream.weibo.tinker.reporter.SampleLoadReporter;
 import com.boredream.weibo.tinker.reporter.SamplePatchListener;
 import com.boredream.weibo.tinker.reporter.SamplePatchReporter;
@@ -38,8 +39,7 @@ public class TinkerManager {
     private static final String TAG = "Tinker.TinkerManager";
 
     private static ApplicationLike applicationLike;
-    // FIXME: 2017/10/23
-//    private static SampleUncaughtExceptionHandler uncaughtExceptionHandler;
+    private static SampleUncaughtExceptionHandler uncaughtExceptionHandler;
     private static boolean isInstalled = false;
 
     public static void setTinkerApplicationLike(ApplicationLike appLike) {
@@ -50,12 +50,12 @@ public class TinkerManager {
         return applicationLike;
     }
 
-//    public static void initFastCrashProtect() {
-//        if (uncaughtExceptionHandler == null) {
-//            uncaughtExceptionHandler = new SampleUncaughtExceptionHandler();
-//            Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
-//        }
-//    }
+    public static void initFastCrashProtect() {
+        if (uncaughtExceptionHandler == null) {
+            uncaughtExceptionHandler = new SampleUncaughtExceptionHandler();
+            Thread.setDefaultUncaughtExceptionHandler(uncaughtExceptionHandler);
+        }
+    }
 
     public static void setUpgradeRetryEnable(boolean enable) {
         UpgradePatchRetry.getInstance(applicationLike.getApplication()).setRetryEnable(enable);

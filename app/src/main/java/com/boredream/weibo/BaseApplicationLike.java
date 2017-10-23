@@ -87,7 +87,7 @@ public class BaseApplicationLike extends DefaultApplicationLike {
 		SampleApplicationContext.context = getApplication();
 		TinkerManager.setTinkerApplicationLike(this);
 
-//		TinkerManager.initFastCrashProtect();
+		TinkerManager.initFastCrashProtect();
 		//should set before tinker is installed
 		TinkerManager.setUpgradeRetryEnable(true);
 
