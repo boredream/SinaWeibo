@@ -28,7 +28,8 @@ import okhttp3.ResponseBody;
 
 public class LoadTinkerManager {
 
-    public static final String PATCH_FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk";
+    private static final String TAG = "LoadTinkerManager";
+    private static final String PATCH_FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk";
 
     private static volatile LoadTinkerManager instance = null;
 
@@ -61,22 +62,26 @@ public class LoadTinkerManager {
                     @Override
                     public ObservableSource<ResponseBody> apply(@NonNull ArrayList<HotPatchInfo> hotPatchInfos) throws Exception {
                         if (CollectionUtils.isEmpty(hotPatchInfos)) {
-                            Log.i("DDD", "LoadTinkerManager: no patch list for apkVersion : " + versionCode);
+                            Log.i(TAG, "no patch list for apkVersion : " + versionCode);
                             return Observable.empty();
                         }
 
                         HashMap<String, String> configs = TinkerApplicationHelper.getPackageConfigs(BaseApplicationLike.instance);
                         // 本地已经打好的热更新版本号
-                        int localPatchVersion = -1;
-                        if(configs != null && configs.get("patchVersion") != null) {
-                            localPatchVersion = Integer.parseInt(configs.get("patchVersion").replace(".", ""));
+                        int localPatchVersionCode = -1;
+                        if(configs != null) {
+                            String localPatchVersion = configs.get("patchVersion");
+                            if(localPatchVersion != null) {
+                                Log.i(TAG, "local patch version = " + localPatchVersion);
+                                localPatchVersionCode = Integer.parseInt(localPatchVersion.replace(".", ""));
+                            }
                         }
 
                         HotPatchInfo newestHotPatchInfo = null;
                         for (HotPatchInfo hotPatchInfo : hotPatchInfos) {
                             Integer version = Integer.parseInt(hotPatchInfo.getHotPatchVersion().replace(".", ""));
                             // 如果服务端的个补丁版本大过本地，则可以使用
-                            if(version > localPatchVersion) {
+                            if(version > localPatchVersionCode) {
 
                                 // 找到最新版本号的补丁信息
                                 if(newestHotPatchInfo == null || version > Integer.parseInt(
@@ -87,11 +92,11 @@ public class LoadTinkerManager {
                         }
 
                         if(newestHotPatchInfo == null) {
-                            Log.i("DDD", "LoadTinkerManager: no newestHotPatchInfo for apkVersion : " + versionCode);
+                            Log.i(TAG, "no newestHotPatchInfo for apkVersion : " + versionCode);
                             return Observable.empty();
                         }
 
-                        Log.i("DDD", "LoadTinkerManager: get newest patch " + newestHotPatchInfo);
+                        Log.i(TAG, "get newest patch " + newestHotPatchInfo);
                         String hotPatchFileUrl = newestHotPatchInfo.getHotPatchFileUrl();
                         return WbHttpRequest.getInstance().getApiService().downloadFile(hotPatchFileUrl);
                     }
@@ -108,7 +113,7 @@ public class LoadTinkerManager {
                            fos.write(responseBody.bytes());
                            fos.close();
 
-                           Log.i("DDD", "LoadTinkerManager onNext: download file success");
+                           Log.i(TAG, "download file success");
 
                            // 使用补丁
                            TinkerInstaller.onReceiveUpgradePatch(
@@ -121,7 +126,7 @@ public class LoadTinkerManager {
 
                    @Override
                    public void onError(@NonNull Throwable e) {
-                       Log.i("DDD", "LoadTinkerManager onError: " + e);
+                       Log.i(TAG, "onError: " + e);
                    }
                });
     }

@@ -53,11 +53,12 @@ public class SampleResultService extends DefaultTinkerResultService {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if (result.isSuccess) {
-                    Toast.makeText(getApplicationContext(), "patch success, please restart process", Toast.LENGTH_LONG).show();
-                } else {
-                    Toast.makeText(getApplicationContext(), "patch fail, please check reason", Toast.LENGTH_LONG).show();
-                }
+                // TODO: 2017/10/23 回报服务端
+//                if (result.isSuccess) {
+//                    Toast.makeText(getApplicationContext(), "patch success, please restart process", Toast.LENGTH_LONG).show();
+//                } else {
+//                    Toast.makeText(getApplicationContext(), "patch fail, please check reason", Toast.LENGTH_LONG).show();
+//                }
             }
         });
         // is success and newPatch, it is nice to delete the raw file, and restart at once
