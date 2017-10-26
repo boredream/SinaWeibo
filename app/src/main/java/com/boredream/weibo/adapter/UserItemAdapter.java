@@ -10,8 +10,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.boredream.bdcodehelper.utils.ToastUtils;
+import com.boredream.weibo.BaseApplicationLike;
 import com.boredream.weibo.R;
 import com.boredream.weibo.entity.UserItem;
+import com.boredream.weibo.tinker.LoadTinkerManager;
+import com.tencent.tinker.lib.tinker.TinkerInstaller;
 
 import java.util.List;
 
@@ -68,6 +71,13 @@ public class UserItemAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v) {
 				ToastUtils.showToast(context, "item click position = " + position, Toast.LENGTH_SHORT);
+
+				if(position == 0) {
+					// 使用补丁
+					TinkerInstaller.onReceiveUpgradePatch(
+							BaseApplicationLike.instance.getApplication(),
+							LoadTinkerManager.PATCH_FILE_PATH);
+				}
 			}
 		});
 		

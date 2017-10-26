@@ -1,6 +1,9 @@
 package com.boredream.weibo.fragment;
 
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +18,7 @@ import com.boredream.weibo.adapter.StatusAdapter;
 import com.boredream.weibo.entity.Goods;
 import com.boredream.weibo.net.RxComposer;
 import com.boredream.weibo.net.WbHttpRequest;
+import com.boredream.weibo.packerng.PackerNg;
 import com.scwang.smartrefresh.layout.SmartRefreshLayout;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
@@ -50,7 +54,7 @@ public class HomeFragment extends BaseFragment {
 		view = View.inflate(getActivity(), R.layout.frag_home, null);
 
 		TitleBarView titlebar = (TitleBarView) view.findViewById(R.id.titlebar);
-		titlebar.setTitleText("首页");
+		titlebar.setTitleText("首页 channel:" + PackerNg.getMarket(getActivity()));
 
 		refresh = (SmartRefreshLayout) view.findViewById(R.id.refresh);
 		lv_home = (ListView) view.findViewById(R.id.lv_home);

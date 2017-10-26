@@ -29,7 +29,7 @@ import okhttp3.ResponseBody;
 public class LoadTinkerManager {
 
     private static final String TAG = "LoadTinkerManager";
-    private static final String PATCH_FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk";
+    public static final String PATCH_FILE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/patch_signed_7zip.apk";
 
     private static volatile LoadTinkerManager instance = null;
 
